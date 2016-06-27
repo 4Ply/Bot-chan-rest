@@ -23,8 +23,7 @@ public class GreetingController {
     }
 
     @RequestMapping(value = "/greeting", produces = "application/json")
-    public @ResponseBody
-    Greeting greeting(@RequestParam(value = "sessionKey", required = false) String sessionKey, @RequestParam(value="name", defaultValue="World") String name) {
+    public @ResponseBody Greeting greeting(@RequestParam(value = "sessionKey", required = false) String sessionKey, @RequestParam(value = "name", defaultValue = "World") String name) {
         sessionHandler.checkSessionKey(sessionKey);
         return new Greeting(counter.incrementAndGet(), String.format(template, name));
     }

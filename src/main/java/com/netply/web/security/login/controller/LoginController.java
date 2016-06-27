@@ -21,7 +21,7 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/login", produces = "application/json")
-    public BasicResultResponse login(@RequestParam(value="username") String username, @RequestParam(value="password") String passwordHash) {
+    public BasicResultResponse login(@RequestParam(value = "username") String username, @RequestParam(value = "password") String passwordHash) {
         return loginHandler.login(username, passwordHash);
     }
 

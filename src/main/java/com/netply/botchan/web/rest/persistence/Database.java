@@ -11,15 +11,25 @@ import java.util.logging.Logger;
 public class Database implements LoginDatabase {
     private final static Logger LOGGER = Logger.getLogger(Database.class.getName());
     private Connection connection;
+    private String mysqlIp;
+    private int mysqlPort;
+    private String mysqlDb;
+    private final String mysqlUser;
+    private final String mysqlPassword;
 
 
-    public Database() throws ClassNotFoundException, IllegalAccessException, InstantiationException, SQLException {
+    public Database(String mysqlIp, int mysqlPort, String mysqlDb, String mysqlUser, String mysqlPassword) throws ClassNotFoundException, IllegalAccessException, InstantiationException, SQLException {
+        this.mysqlIp = mysqlIp;
+        this.mysqlPort = mysqlPort;
+        this.mysqlDb = mysqlDb;
+        this.mysqlUser = mysqlUser;
+        this.mysqlPassword = mysqlPassword;
         Class.forName("com.mysql.jdbc.Driver").newInstance();
         connection = createConnection();
     }
 
     private Connection createConnection() throws SQLException {
-        return createConnectionForCredentials(Credentials.MYSQL_IP, Credentials.MYSQL_PORT, Credentials.MYSQL_DB, Credentials.MYSQL_USER, Credentials.MYSQL_PASSWORD);
+        return createConnectionForCredentials(mysqlIp, mysqlPort, mysqlDb, mysqlUser, mysqlPassword);
     }
 
     private Connection createConnectionForCredentials(String mysqlIp, int mysqlPort, String mysqlDb, String mysqlUser, String mysqlPassword) throws SQLException {
