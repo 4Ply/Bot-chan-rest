@@ -19,27 +19,25 @@ public class GameController {
     }
 
     @RequestMapping(value = "/trackedPlayers", consumes = "application/json", produces = "application/json")
-    public @ResponseBody BasicResultResponse trackedPlayers(
+    public @ResponseBody ArrayList<String> trackedPlayers(
             @RequestParam(value = "sessionKey", required = false) String sessionKey,
-            @RequestParam(value = "botType", required = true) String botType) {
+            @RequestParam(value = "botType") String botType) {
         sessionHandler.checkSessionKey(sessionKey);
 
-        return new BasicResultResponse(sessionHandler.isSessionValid(sessionKey), sessionKey);
+        ArrayList<String> strings = new ArrayList<>();
+        strings.add("Player1");
+        return strings;
     }
 
-    @RequestMapping(value = "/currentGames", consumes = "application/json", produces = "application/json")
-    public @ResponseBody ArrayList<String> currentGames(
+    @RequestMapping(value = "/currentGames", consumes = "application/json", produces = {"application/json", "text/plain"}, method = RequestMethod.POST)
+    public @ResponseBody BasicResultResponse currentGames(
             @RequestParam(value = "sessionKey", required = false) String sessionKey,
-            @RequestParam(value = "botType", required = true) String botType,
+            @RequestParam(value = "botType") String botType,
             @RequestBody SimpleList players) {
         sessionHandler.checkSessionKey(sessionKey);
 
         System.out.println("PLAYERS: " + players);
 
-        ArrayList<String> strings = new ArrayList<>();
-        strings.add("as");
-        strings.add("asas");
-        strings.add("asa23");
-        return strings;
+        return new BasicResultResponse(sessionHandler.isSessionValid(sessionKey), sessionKey);
     }
 }

@@ -48,7 +48,11 @@ public class BaseControllerTest {
     }
 
     protected void testInvalidSession(MockMvc mvc, String url, MultiValueMap<String, String> params) throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get(url).param("sessionKey", INVALID_SESSION_KEY).params(params))
+        testInvalidSession(mvc, MockMvcRequestBuilders.get(url).params(params));
+    }
+
+    protected void testInvalidSession(MockMvc mvc, MockHttpServletRequestBuilder requestBuilder) throws Exception {
+        mvc.perform(requestBuilder.param("sessionKey", INVALID_SESSION_KEY))
                 .andExpect(status().isUnauthorized());
     }
 
