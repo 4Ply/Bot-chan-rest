@@ -29,8 +29,8 @@
 
     <scm>
         <url>https://github.com/4Ply/Bot-chan-rest</url>
-        <connection>scm:git:ssh://git@github.com:4Ply/Bot-chan-rest.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com:4Ply/Bot-chan-rest.git</developerConnection>
+        <connection>scm:git:ssh://git@github.com/4Ply/Bot-chan-rest.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/4Ply/Bot-chan-rest.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
@@ -69,7 +69,7 @@
         <dependency>
             <groupId>com.netply.web</groupId>
             <artifactId>Bot-chan-rest-models</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
 
         <dependency>
