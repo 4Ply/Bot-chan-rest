@@ -15,7 +15,7 @@
     <properties>
         <java.version>1.8</java.version>
         <jdk.version>1.6</jdk.version>
-        <spring-profile>dev</spring-profile>
+        <spring.profiles.active>dev</spring.profiles.active>
     </properties>
 
     <distributionManagement>
@@ -85,16 +85,23 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <spring.profiles.active>dev</spring.profiles.active>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <profiles>
-                        <profile>${spring-profile}</profile>
-                    </profiles>
-                </configuration>
             </plugin>
 
             <plugin>
