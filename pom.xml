@@ -4,7 +4,7 @@
 
     <groupId>com.netply.web</groupId>
     <artifactId>Bot-chan-rest</artifactId>
-    <version>1.1</version>
+    <version>1.2-SNAPSHOT</version>
     <!-- <version>${project.version}</version> -->
 
     <parent>
