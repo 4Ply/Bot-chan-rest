@@ -8,5 +8,33 @@
     <artifactId>Bot-chan-rest-models</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    
+    <distributionManagement>
+        <snapshotRepository>
+            <id>nexus-snapshots</id>
+            <url>http://localhost:8081/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <scm>
+        <url>https://github.com/4Ply/Bot-chan-rest</url>
+        <connection>scm:git:git://github.com/4Ply/Bot-chan-rest.git</connection>
+        <developerConnection>scm:git:https://github.com/4Ply/Bot-chan-rest.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>nexus</serverId>
+                    <nexusUrl>http://localhost:8081/nexus/</nexusUrl>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
