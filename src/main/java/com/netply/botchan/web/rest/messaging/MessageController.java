@@ -26,15 +26,15 @@ public class MessageController {
     public @ResponseBody List<Message> messages(
             @RequestParam(value = "sessionKey") String sessionKey,
             @RequestParam(value = "botType") String botType,
-            @RequestParam(value = "id") Integer id) {
+            @RequestParam(value = "id") Integer clientID) {
         sessionHandler.checkSessionKey(sessionKey);
-        sessionHandler.checkClientIDAuthorisation(sessionKey, id);
+        sessionHandler.checkClientIDAuthorisation(sessionKey, clientID);
 
-        return messageManager.getMessages(id);
+        return messageManager.getMessages(clientID);
     }
 
     @RequestMapping(value = "/message", method = RequestMethod.PUT)
-    public void message(
+    public void addMessage(
             @RequestParam(value = "sessionKey") String sessionKey,
             @RequestParam(value = "botType") String botType,
             @RequestBody Message message) {
@@ -43,5 +43,17 @@ public class MessageController {
         for (Integer integer : nodeMessageMatcherProvider.getMatchingNodeIDs(message.getMessage())) {
             messageManager.addMessage(integer, message);
         }
+    }
+
+    @RequestMapping(value = "/message", method = RequestMethod.DELETE)
+    public void deleteMessage(
+            @RequestParam(value = "sessionKey") String sessionKey,
+            @RequestParam(value = "botType") String botType,
+            @RequestParam(value = "clientID") Integer clientID,
+            @RequestParam(value = "id") String messageID) {
+        sessionHandler.checkSessionKey(sessionKey);
+        sessionHandler.checkClientIDAuthorisation(sessionKey, clientID);
+
+        messageManager.deleteMessage(clientID, messageID);
     }
 }

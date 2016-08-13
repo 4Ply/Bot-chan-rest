@@ -54,6 +54,6 @@ public class AppConfig {
 
     @Bean
     public MessageManager messageManager() {
-        return new MessageManagerImpl();
+        return MessageManagerImpl.getInstance();
     }
 }

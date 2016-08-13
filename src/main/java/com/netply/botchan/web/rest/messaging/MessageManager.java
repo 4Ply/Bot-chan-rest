@@ -8,4 +8,6 @@ public interface MessageManager {
     void addMessage(Integer integer, Message message);
 
     List<Message> getMessages(Integer integer);
+
+    void deleteMessage(Integer clientID, String messageID);
 }
