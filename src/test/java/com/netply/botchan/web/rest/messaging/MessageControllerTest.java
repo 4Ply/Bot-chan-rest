@@ -35,7 +35,6 @@ public class MessageControllerTest extends BaseControllerTest {
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/messages")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .param("botType", "test")
                 .param("entity", "entity_without_messages");
 
         super.testInvalidSession(mvc, requestBuilder);
@@ -46,7 +45,6 @@ public class MessageControllerTest extends BaseControllerTest {
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/messages")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .param("botType", "test")
                 .param("entity", "entity_without_messages");
 
         ArrayList<Message> messages = new ArrayList<>();

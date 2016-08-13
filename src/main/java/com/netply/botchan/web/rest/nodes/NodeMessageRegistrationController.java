@@ -9,27 +9,38 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @RestController
-public class MessageMatcherController {
+public class NodeMessageRegistrationController {
     private SessionHandler sessionHandler;
     private NodeMessageMatcherProvider nodeMessageMatcherProvider;
 
 
     @Autowired
-    public MessageMatcherController(SessionHandler sessionHandler, NodeMessageMatcherProvider nodeMessageMatcherProvider) {
+    public NodeMessageRegistrationController(SessionHandler sessionHandler, NodeMessageMatcherProvider nodeMessageMatcherProvider) {
         this.sessionHandler = sessionHandler;
         this.nodeMessageMatcherProvider = nodeMessageMatcherProvider;
     }
 
     @RequestMapping(value = "/messageMatchers", consumes = "application/json", produces = "application/json", method = RequestMethod.PUT)
-    public void node(
+    public void addMessageMatchers(
             @RequestParam(value = "sessionKey", required = false) String sessionKey,
-            @RequestParam(value = "botType") String botType,
             @RequestBody MatcherList matcherList) {
         sessionHandler.checkSessionKey(sessionKey);
 
         Logger.getGlobal().log(Level.FINE, matcherList.toString());
         for (String messageMatcher : matcherList.getMessageMatchers()) {
             nodeMessageMatcherProvider.registerMatcher(messageMatcher, matcherList.getId());
+        }
+    }
+
+    @RequestMapping(value = "/platformMatchers", consumes = "application/json", produces = "application/json", method = RequestMethod.PUT)
+    public void addPlatformMatchers(
+            @RequestParam(value = "sessionKey", required = false) String sessionKey,
+            @RequestBody MatcherList matcherList) {
+        sessionHandler.checkSessionKey(sessionKey);
+
+        Logger.getGlobal().log(Level.FINE, matcherList.toString());
+        for (String messageMatcher : matcherList.getMessageMatchers()) {
+            nodeMessageMatcherProvider.registerNodeForPlatform(messageMatcher, matcherList.getId());
         }
     }
 }

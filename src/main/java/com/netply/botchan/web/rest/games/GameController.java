@@ -20,8 +20,7 @@ public class GameController {
 
     @RequestMapping(value = "/trackedPlayers", consumes = "application/json", produces = "application/json")
     public @ResponseBody ArrayList<String> trackedPlayers(
-            @RequestParam(value = "sessionKey", required = false) String sessionKey,
-            @RequestParam(value = "botType") String botType) {
+            @RequestParam(value = "sessionKey", required = false) String sessionKey) {
         sessionHandler.checkSessionKey(sessionKey);
 
         ArrayList<String> strings = new ArrayList<>();
@@ -32,7 +31,6 @@ public class GameController {
     @RequestMapping(value = "/currentGames", consumes = "application/json", produces = {"application/json", "text/plain"}, method = RequestMethod.POST)
     public @ResponseBody BasicResultResponse currentGames(
             @RequestParam(value = "sessionKey", required = false) String sessionKey,
-            @RequestParam(value = "botType") String botType,
             @RequestBody SimpleList players) {
         sessionHandler.checkSessionKey(sessionKey);
 

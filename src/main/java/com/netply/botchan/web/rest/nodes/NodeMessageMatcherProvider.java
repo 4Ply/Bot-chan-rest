@@ -6,4 +6,8 @@ public interface NodeMessageMatcherProvider {
     List<Integer> getMatchingNodeIDs(String message);
 
     void registerMatcher(String regex, Integer nodeID);
+
+    List<Integer> getNodeIDsForPlatform(String platform);
+
+    void registerNodeForPlatform(String platform, Integer nodeID);
 }
