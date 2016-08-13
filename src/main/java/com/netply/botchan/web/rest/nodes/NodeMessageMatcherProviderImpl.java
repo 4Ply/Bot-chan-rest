@@ -12,6 +12,7 @@ public class NodeMessageMatcherProviderImpl implements NodeMessageMatcherProvide
 
     @Override
     public List<Integer> getMatchingNodeIDs(String message) {
+        message = message.toLowerCase();
         return matcherNodeMap.keySet().stream()
                 .filter(message::matches)
                 .flatMap(s -> matcherNodeMap.get(s).stream())

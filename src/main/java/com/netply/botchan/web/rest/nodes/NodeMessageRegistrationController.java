@@ -28,7 +28,7 @@ public class NodeMessageRegistrationController {
 
         Logger.getGlobal().log(Level.FINE, matcherList.toString());
         for (String messageMatcher : matcherList.getMessageMatchers()) {
-            nodeMessageMatcherProvider.registerMatcher(messageMatcher, matcherList.getId());
+            nodeMessageMatcherProvider.registerMatcher(messageMatcher.toLowerCase(), matcherList.getId());
         }
     }
 
