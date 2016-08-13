@@ -56,7 +56,7 @@ public class Database implements LoginDatabase {
                 int userId = resultSet.getInt("id");
                 boolean userLocked = userLocked(userId);
                 if (!userLocked && resultSet.getString("password").equals(password)) {
-                    return new BasicResultResponse(true, generateSessionKey(userId));
+                    return new BasicResultResponse(true, generateSessionKey(userId), userId);
                 } else {
                     try (PreparedStatement preparedStatement2 = getConnection().prepareStatement("INSERT INTO login_attempts (id, user_id, time) VALUES (NULL, ?, NOW())")) {
                         preparedStatement2.setInt(1, userId);
@@ -113,6 +113,24 @@ public class Database implements LoginDatabase {
                     e.printStackTrace();
                 }
 
+                return true;
+            }
+        } catch (SQLException e) {
+            Database.LOGGER.severe(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean isAuthorisedForClientId(String sessionKey, Integer clientId) {
+        try (PreparedStatement preparedStatement = getConnection().prepareStatement("SELECT * FROM session_keys WHERE time > NOW() - INTERVAL 1 HOUR AND `key` = ? AND `user_id` = ? LIMIT 1")) {
+            preparedStatement.setString(1, sessionKey);
+            preparedStatement.setInt(2, clientId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
                 return true;
             }
         } catch (SQLException e) {

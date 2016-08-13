@@ -14,8 +14,18 @@ public class SessionHandler {
         return database.checkSessionKey(sessionKey);
     }
 
+    public boolean isAuthorisedForClientId(String sessionKey, Integer clientID) {
+        return database.isAuthorisedForClientId(sessionKey, clientID);
+    }
+
     public void checkSessionKey(String sessionKey) {
         if (!isSessionValid(sessionKey)) {
+            throw new UnauthorisedException();
+        }
+    }
+
+    public void checkClientIDAuthorisation(String sessionKey, Integer clientID) {
+        if (!isAuthorisedForClientId(sessionKey, clientID)) {
             throw new UnauthorisedException();
         }
     }

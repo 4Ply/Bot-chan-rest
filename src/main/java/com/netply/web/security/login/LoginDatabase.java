@@ -9,4 +9,6 @@ public interface LoginDatabase {
     String generateSessionKey(int userId);
 
     boolean checkSessionKey(String sessionKey);
+
+    boolean isAuthorisedForClientId(String sessionKey, Integer clientId);
 }

@@ -1,5 +1,7 @@
 package com.netply.botchan.web.rest;
 
+import com.netply.botchan.web.rest.messaging.MessageManager;
+import com.netply.botchan.web.rest.messaging.MessageManagerImpl;
 import com.netply.botchan.web.rest.nodes.NodeMessageMatcherProvider;
 import com.netply.botchan.web.rest.nodes.NodeMessageMatcherProviderImpl;
 import com.netply.botchan.web.rest.persistence.Database;
@@ -48,5 +50,10 @@ public class AppConfig {
     @Bean
     public NodeMessageMatcherProvider nodeMessageMatcherProvider() {
         return new NodeMessageMatcherProviderImpl();
+    }
+
+    @Bean
+    public MessageManager messageManager() {
+        return new MessageManagerImpl();
     }
 }
