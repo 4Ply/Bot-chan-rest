@@ -1,6 +1,6 @@
 package com.netply.botchan.web.rest;
 
-import com.netply.botchan.web.model.Greeting;
+import com.netply.botchan.web.model.BasicMessageObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.MediaType;
@@ -30,7 +30,7 @@ public class GreetingControllerTest extends BaseControllerTest {
 
         mvc.perform(withValidSessionKey(requestBuilder))
                 .andExpect(status().isOk())
-                .andExpect(content().json(gson.toJson(new Greeting(1, "Hello, World!"))));
+                .andExpect(content().json(gson.toJson(new BasicMessageObject(1, "Hello, World!"))));
     }
 
     @Test
@@ -42,6 +42,6 @@ public class GreetingControllerTest extends BaseControllerTest {
 
         mvc.perform(withValidSessionKey(requestBuilder))
                 .andExpect(status().isOk())
-                .andExpect(content().json(gson.toJson(new Greeting(1, "Hello, Pawel!"))));
+                .andExpect(content().json(gson.toJson(new BasicMessageObject(1, "Hello, Pawel!"))));
     }
 }

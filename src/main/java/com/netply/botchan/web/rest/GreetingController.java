@@ -1,6 +1,6 @@
 package com.netply.botchan.web.rest;
 
-import com.netply.botchan.web.model.Greeting;
+import com.netply.botchan.web.model.BasicMessageObject;
 import com.netply.web.security.login.SessionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,8 +23,9 @@ public class GreetingController {
     }
 
     @RequestMapping(value = "/greeting", produces = "application/json")
-    public @ResponseBody Greeting greeting(@RequestParam(value = "sessionKey", required = false) String sessionKey, @RequestParam(value = "name", defaultValue = "World") String name) {
+    public @ResponseBody
+    BasicMessageObject greeting(@RequestParam(value = "sessionKey", required = false) String sessionKey, @RequestParam(value = "name", defaultValue = "World") String name) {
         sessionHandler.checkSessionKey(sessionKey);
-        return new Greeting(counter.incrementAndGet(), String.format(template, name));
+        return new BasicMessageObject(counter.incrementAndGet(), String.format(template, name));
     }
 }
