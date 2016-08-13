@@ -1,5 +1,7 @@
 package com.netply.botchan.web.rest;
 
+import com.netply.botchan.web.rest.games.TrackedPlayerManager;
+import com.netply.botchan.web.rest.games.TrackedPlayerManagerImpl;
 import com.netply.botchan.web.rest.messaging.MessageManager;
 import com.netply.botchan.web.rest.messaging.MessageManagerImpl;
 import com.netply.botchan.web.rest.nodes.NodeMessageMatcherProvider;
@@ -55,5 +57,10 @@ public class AppConfig {
     @Bean
     public MessageManager messageManager() {
         return MessageManagerImpl.getInstance();
+    }
+
+    @Bean
+    public TrackedPlayerManager trackedPlayerManager() {
+        return new TrackedPlayerManagerImpl();
     }
 }
