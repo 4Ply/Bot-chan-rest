@@ -1,0 +1,3 @@
+[submodule "Bot-chan-rest-models"]
+	path = Bot-chan-rest-models
+	url = git@github.com:4Ply/Bot-chan-rest-models.git
