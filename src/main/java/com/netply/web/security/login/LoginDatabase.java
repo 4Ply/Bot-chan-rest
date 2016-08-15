@@ -1,5 +1,6 @@
 package com.netply.web.security.login;
 
+import com.netply.botchan.web.model.Account;
 import com.netply.botchan.web.model.BasicResultResponse;
 import com.netply.botchan.web.rest.error.InvalidCredentialsException;
 
@@ -11,4 +12,6 @@ public interface LoginDatabase {
     boolean checkSessionKey(String sessionKey);
 
     boolean isAuthorisedForClientId(String sessionKey, Integer clientId);
+
+    Account findByUsername(String username);
 }
