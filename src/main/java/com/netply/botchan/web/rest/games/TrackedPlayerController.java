@@ -1,11 +1,14 @@
 package com.netply.botchan.web.rest.games;
 
-import com.netply.botchan.web.model.BasicMessageObject;
+import com.netply.botchan.web.model.TrackPlayerRequest;
+import com.netply.botchan.web.model.User;
 import com.netply.web.security.login.SessionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.InvalidParameterException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class TrackedPlayerController {
@@ -19,22 +22,39 @@ public class TrackedPlayerController {
         this.trackedPlayerManager = trackedPlayerManager;
     }
 
-    @RequestMapping(value = "/trackedPlayers", produces = "application/json", method = RequestMethod.GET)
+    @RequestMapping(value = "/trackedPlayers", produces = "application/json", method = RequestMethod.POST)
     public @ResponseBody List<String> getTrackedPlayers(
             @RequestParam(value = "sessionKey") String sessionKey,
-            @RequestParam(value = "id") String clientID) {
+            @RequestBody User user) {
         sessionHandler.checkSessionKey(sessionKey);
 
-        return trackedPlayerManager.getTrackedPlayers(clientID);
+        return trackedPlayerManager.getTrackedPlayers(user).stream().distinct().collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/trackedPlayer", consumes = "application/json", produces = "application/json", method = RequestMethod.PUT)
     public void trackPlayer(
             @RequestParam(value = "sessionKey") String sessionKey,
-            @RequestParam(value = "id") String clientID,
-            @RequestBody BasicMessageObject playerName) {
+            @RequestBody TrackPlayerRequest trackPlayerRequest) {
         sessionHandler.checkSessionKey(sessionKey);
 
-        trackedPlayerManager.trackPlayer(clientID, playerName.getMessage());
+        if (trackPlayerRequest.getUser().getPlatform() == null) {
+            throw new InvalidParameterException();
+        }
+
+        trackedPlayerManager.trackPlayer(trackPlayerRequest.getUser(), trackPlayerRequest.getPlayerName());
+    }
+
+    @RequestMapping(value = "/trackers", produces = "application/json", method = RequestMethod.GET)
+    public @ResponseBody List<User> getTrackers(
+            @RequestParam(value = "sessionKey") String sessionKey,
+            @RequestParam(value = "platform", required = false) String platform,
+            @RequestParam(value = "player") String trackedPlayer) {
+        sessionHandler.checkSessionKey(sessionKey);
+
+        List<User> trackers = trackedPlayerManager.getTrackers(trackedPlayer);
+        if (platform != null) {
+            trackers = trackers.stream().filter(user -> platform.equals(user.getPlatform())).collect(Collectors.toList());
+        }
+        return trackers;
     }
 }
