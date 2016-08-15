@@ -2,7 +2,6 @@ package com.netply.botchan.web.rest.messaging;
 
 import com.netply.botchan.web.model.Message;
 import com.netply.botchan.web.rest.BaseControllerTest;
-import com.netply.botchan.web.rest.nodes.NodeMessageMatcherProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.MediaType;
@@ -19,15 +18,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class MessageControllerTest extends BaseControllerTest {
     private MockMvc mvc;
-    private NodeMessageMatcherProvider nodeMessageMatcherProvider;
     private MessageManager messageManager;
 
 
     @Before
     public void setUp() throws Exception {
-        nodeMessageMatcherProvider = mock(NodeMessageMatcherProvider.class);
         messageManager = mock(MessageManager.class);
-        mvc = MockMvcBuilders.standaloneSetup(new MessageController(sessionHandler, nodeMessageMatcherProvider, messageManager)).build();
+        mvc = MockMvcBuilders.standaloneSetup(new MessageController(sessionHandler, messageManager)).build();
     }
 
     @Test

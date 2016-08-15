@@ -33,4 +33,12 @@ public class TrackedPlayerManagerImpl implements TrackedPlayerManager {
                 .distinct()
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<User> getAllTrackedPlayers(String platform) {
+        return trackedPlayersMap.keySet().stream()
+                .filter(user -> platform.equals(user.getPlatform()))
+                .distinct()
+                .collect(Collectors.toList());
+    }
 }

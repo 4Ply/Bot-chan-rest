@@ -3,18 +3,19 @@ package com.netply.botchan.web.rest.messaging;
 import com.netply.botchan.web.model.Message;
 import com.netply.botchan.web.model.Reply;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface MessageManager {
-    void addMessage(Integer integer, Message message);
+    void addMessage(Message message);
 
-    void deleteMessage(Integer clientID, String messageID);
+    void markMessageAsProcessed(String messageID, Integer clientID);
 
-    List<Message> getMessages(Integer integer);
+    List<Message> getMessagesExcludingOnesDeletedForID(ArrayList<String> messageMatchers, Integer integer);
 
-    void addReply(Integer integer, Reply reply);
+    void addReply(Reply reply);
 
-    void deleteReply(Integer clientID, String messageID);
+    void markReplyAsProcessed(String messageID, Integer clientID);
 
-    List<Reply> getReplies(Integer integer);
+    List<Reply> getRepliesExcludingOnesDeletedForID(ArrayList<String> platformMatchers, Integer integer);
 }

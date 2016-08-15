@@ -4,8 +4,6 @@ import com.netply.botchan.web.rest.games.TrackedPlayerManager;
 import com.netply.botchan.web.rest.games.TrackedPlayerManagerImpl;
 import com.netply.botchan.web.rest.messaging.MessageManager;
 import com.netply.botchan.web.rest.messaging.MessageManagerImpl;
-import com.netply.botchan.web.rest.nodes.NodeMessageMatcherProvider;
-import com.netply.botchan.web.rest.nodes.NodeMessageMatcherProviderImpl;
 import com.netply.botchan.web.rest.persistence.Database;
 import com.netply.web.security.login.LoginDatabase;
 import com.netply.web.security.login.LoginHandler;
@@ -47,11 +45,6 @@ public class AppConfig {
     @Bean
     public SessionHandler sessionHandler(LoginDatabase loginDatabase) {
         return new SessionHandler(loginDatabase);
-    }
-
-    @Bean
-    public NodeMessageMatcherProvider nodeMessageMatcherProvider() {
-        return new NodeMessageMatcherProviderImpl();
     }
 
     @Bean

@@ -10,4 +10,6 @@ public interface TrackedPlayerManager {
     void trackPlayer(User user, String playerName);
 
     List<User> getTrackers(String playerName);
+
+    List<User> getAllTrackedPlayers(String platform);
 }

@@ -57,4 +57,13 @@ public class TrackedPlayerController {
         }
         return trackers;
     }
+
+    @RequestMapping(value = "/allTrackedPlayers", produces = "application/json", method = RequestMethod.GET)
+    public @ResponseBody List<User> getTrackers(
+            @RequestParam(value = "sessionKey") String sessionKey,
+            @RequestParam(value = "platform", required = false) String platform) {
+        sessionHandler.checkSessionKey(sessionKey);
+
+        return trackedPlayerManager.getAllTrackedPlayers(platform);
+    }
 }

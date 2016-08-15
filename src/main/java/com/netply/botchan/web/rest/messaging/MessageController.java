@@ -1,8 +1,8 @@
 package com.netply.botchan.web.rest.messaging;
 
+import com.netply.botchan.web.model.MatcherList;
 import com.netply.botchan.web.model.Message;
 import com.netply.botchan.web.model.Reply;
-import com.netply.botchan.web.rest.nodes.NodeMessageMatcherProvider;
 import com.netply.web.security.login.SessionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,25 +12,24 @@ import java.util.List;
 @RestController
 public class MessageController {
     private SessionHandler sessionHandler;
-    private NodeMessageMatcherProvider nodeMessageMatcherProvider;
     private MessageManager messageManager;
 
 
     @Autowired
-    public MessageController(SessionHandler sessionHandler, NodeMessageMatcherProvider nodeMessageMatcherProvider, MessageManager messageManager) {
+    public MessageController(SessionHandler sessionHandler, MessageManager messageManager) {
         this.sessionHandler = sessionHandler;
-        this.nodeMessageMatcherProvider = nodeMessageMatcherProvider;
         this.messageManager = messageManager;
     }
 
-    @RequestMapping(value = "/messages", produces = "application/json", method = RequestMethod.GET)
+    @RequestMapping(value = "/messages", produces = "application/json", method = RequestMethod.POST)
     public @ResponseBody List<Message> getMessages(
             @RequestParam(value = "sessionKey") String sessionKey,
-            @RequestParam(value = "id") Integer clientID) {
+            @RequestBody MatcherList matcherList) {
         sessionHandler.checkSessionKey(sessionKey);
+        Integer clientID = matcherList.getId();
         sessionHandler.checkClientIDAuthorisation(sessionKey, clientID);
 
-        return messageManager.getMessages(clientID);
+        return messageManager.getMessagesExcludingOnesDeletedForID(matcherList.getMatchers(), clientID);
     }
 
     @RequestMapping(value = "/message", method = RequestMethod.PUT)
@@ -39,9 +38,7 @@ public class MessageController {
             @RequestBody Message message) {
         sessionHandler.checkSessionKey(sessionKey);
 
-        for (Integer integer : nodeMessageMatcherProvider.getMatchingNodeIDs(message.getMessage())) {
-            messageManager.addMessage(integer, message);
-        }
+        messageManager.addMessage(message);
     }
 
     @RequestMapping(value = "/message", method = RequestMethod.DELETE)
@@ -52,7 +49,7 @@ public class MessageController {
         sessionHandler.checkSessionKey(sessionKey);
         sessionHandler.checkClientIDAuthorisation(sessionKey, clientID);
 
-        messageManager.deleteMessage(clientID, messageID);
+        messageManager.markMessageAsProcessed(messageID, clientID);
     }
 
     @RequestMapping(value = "/reply", method = RequestMethod.PUT)
@@ -61,19 +58,18 @@ public class MessageController {
             @RequestBody Reply reply) {
         sessionHandler.checkSessionKey(sessionKey);
 
-        for (Integer integer : nodeMessageMatcherProvider.getNodeIDsForPlatform(reply.getPlatform())) {
-            messageManager.addReply(integer, reply);
-        }
+        messageManager.addReply(reply);
     }
 
-    @RequestMapping(value = "/replies", produces = "application/json", method = RequestMethod.GET)
+    @RequestMapping(value = "/replies", produces = "application/json", method = RequestMethod.POST)
     public @ResponseBody List<Reply> getReplies(
             @RequestParam(value = "sessionKey") String sessionKey,
-            @RequestParam(value = "id") Integer clientID) {
+            @RequestBody MatcherList matcherList) {
         sessionHandler.checkSessionKey(sessionKey);
+        Integer clientID = matcherList.getId();
         sessionHandler.checkClientIDAuthorisation(sessionKey, clientID);
 
-        return messageManager.getReplies(clientID);
+        return messageManager.getRepliesExcludingOnesDeletedForID(matcherList.getMatchers(), clientID);
     }
 
     @RequestMapping(value = "/reply", method = RequestMethod.DELETE)
@@ -84,6 +80,6 @@ public class MessageController {
         sessionHandler.checkSessionKey(sessionKey);
         sessionHandler.checkClientIDAuthorisation(sessionKey, clientID);
 
-        messageManager.deleteReply(clientID, replyID);
+        messageManager.markReplyAsProcessed(replyID, clientID);
     }
 }
