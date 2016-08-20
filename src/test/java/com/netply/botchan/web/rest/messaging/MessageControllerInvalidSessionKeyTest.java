@@ -15,10 +15,9 @@ import java.util.ArrayList;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class MessageControllerTest extends BaseControllerTest {
+public class MessageControllerInvalidSessionKeyTest extends BaseControllerTest {
     private MockMvc mvc;
     private MessageManager messageManager;
 
@@ -30,52 +29,62 @@ public class MessageControllerTest extends BaseControllerTest {
     }
 
     @Test
-    public void test_Put_Message_Adds_Message_To_MessageManager() throws Exception {
+    public void test_Put_Message_With_Valid_Invalid_Session_Key_Does_Not_Add_Message_To_MessageManager_And_Returns_Error() throws Exception {
         Message message = new Message();
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.put("/message")
                 .content(gson.toJson(message))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);
 
-        mvc.perform(withValidSessionKey(requestBuilder)).andExpect(status().isOk());
-        verify(messageManager).addMessage(eq(message));
+        testInvalidSession(mvc, requestBuilder);
+        verify(messageManager, never()).addMessage(eq(message));
     }
 
     @Test
-    public void test_Post_Messages_Returns_List_Of_Messages_For_A_Client_ID() throws Exception {
+    public void test_Post_Messages_With_Invalid_Session_Key_Returns_Error() throws Exception {
+        testUnauthorisedPostMessagesRequest(INVALID_SESSION_KEY, VALID_CLIENT_ID);
+    }
+
+    @Test
+    public void test_Post_Messages_With_Valid_Session_Key_But_Invalid_Client_ID_Returns_Error() throws Exception {
+        testUnauthorisedPostMessagesRequest(VALID_SESSION_KEY, INVALID_CLIENT_ID);
+    }
+
+    private void testUnauthorisedPostMessagesRequest(String sessionKey, int clientId) throws Exception {
         ArrayList<String> matchers = new ArrayList<>();
         matchers.add("111");
-        MatcherList matcherList = new MatcherList(VALID_CLIENT_ID, matchers);
-
-        ArrayList<Message> expected = new ArrayList<>();
-        expected.add(new Message("32487", "Platform1", "Message"));
-        expected.add(new Message("09548", "Platform1", "Message2"));
-        expected.add(new Message("44129", "Platform2", "Message3"));
-        doReturn(expected).when(messageManager).getMessagesExcludingOnesDeletedForID(eq(matchers), eq(VALID_CLIENT_ID));
+        MatcherList matcherList = new MatcherList(clientId, matchers);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/messages")
                 .content(gson.toJson(matcherList))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);
 
-        mvc.perform(withValidSessionKey(requestBuilder))
-                .andExpect(status().isOk())
-                .andExpect(content().json(gson.toJson(expected)));
-        verify(messageManager).getMessagesExcludingOnesDeletedForID(eq(matchers), eq(VALID_CLIENT_ID));
+        mvc.perform(requestBuilder.param("sessionKey", sessionKey)).andExpect(status().isUnauthorized());
+        verify(messageManager, never()).getMessagesExcludingOnesDeletedForID(any(matchers.getClass()), anyInt());
     }
 
     @Test
-    public void test_Delete_Message_Marks_Message_As_Processed_In_Message_Manager() throws Exception {
+    public void test_Delete_Message_With_Invalid_Session_Key_Returns_Error() throws Exception {
+        testDeleteMessageUnauthorised(INVALID_SESSION_KEY, VALID_CLIENT_ID);
+    }
+
+    @Test
+    public void test_Delete_Message_With_Valid_Session_Key_But_Invalid_Client_ID_Returns_Error() throws Exception {
+        testDeleteMessageUnauthorised(VALID_SESSION_KEY, INVALID_CLIENT_ID);
+    }
+
+    private void testDeleteMessageUnauthorised(String sessionKey, int clientId) throws Exception {
         Message message = new Message();
         String messageID = "message-id";
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/message")
-                .param("clientID", String.valueOf(VALID_CLIENT_ID))
+                .param("clientID", String.valueOf(clientId))
                 .param("id", messageID)
                 .content(gson.toJson(message))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);
 
-        mvc.perform(withValidSessionKey(requestBuilder)).andExpect(status().isOk());
-        verify(messageManager).markMessageAsProcessed(eq(messageID), eq(VALID_CLIENT_ID));
+        mvc.perform(requestBuilder.param("sessionKey", sessionKey)).andExpect(status().isUnauthorized());
+        verify(messageManager, never()).markMessageAsProcessed(anyString(), anyInt());
     }
 }

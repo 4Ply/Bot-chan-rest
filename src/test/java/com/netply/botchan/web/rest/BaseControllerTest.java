@@ -29,6 +29,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class BaseControllerTest {
     public static final String VALID_SESSION_KEY = "VALID_SESSION_KEY";
     public static final String INVALID_SESSION_KEY = "INVALID_SESSION_KEY";
+    public static final int INVALID_CLIENT_ID = -1;
+    public static final int VALID_CLIENT_ID = 10;
     protected Gson gson = new Gson();
     protected Database database;
     protected SessionHandler sessionHandler;
@@ -39,6 +41,8 @@ public class BaseControllerTest {
         database = mock(Database.class);
         doReturn(true).when(database).checkSessionKey(eq(VALID_SESSION_KEY));
         doReturn(false).when(database).checkSessionKey(AdditionalMatchers.not(eq(VALID_SESSION_KEY)));
+        doReturn(true).when(database).isAuthorisedForClientId(eq(VALID_SESSION_KEY), eq(VALID_CLIENT_ID));
+        doReturn(false).when(database).isAuthorisedForClientId(AdditionalMatchers.not(eq(VALID_SESSION_KEY)), AdditionalMatchers.not(eq(VALID_CLIENT_ID)));
 
         sessionHandler = new SessionHandler(database);
     }

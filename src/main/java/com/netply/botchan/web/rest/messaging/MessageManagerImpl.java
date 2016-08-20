@@ -17,6 +17,7 @@ public class MessageManagerImpl implements MessageManager {
     private MultiValueMap<Reply, Integer> replyMap = new LinkedMultiValueMap<>();
 
 
+    @Deprecated // Replace with DB
     public static MessageManagerImpl getInstance() {
         if (instance == null) {
             instance = new MessageManagerImpl();
