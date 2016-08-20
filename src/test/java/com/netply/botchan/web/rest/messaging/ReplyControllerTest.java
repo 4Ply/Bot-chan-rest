@@ -2,6 +2,7 @@ package com.netply.botchan.web.rest.messaging;
 
 import com.netply.botchan.web.model.MatcherList;
 import com.netply.botchan.web.model.Message;
+import com.netply.botchan.web.model.Reply;
 import com.netply.botchan.web.rest.BaseControllerTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +19,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class MessageControllerTest extends BaseControllerTest {
+public class ReplyControllerTest extends BaseControllerTest {
     private MockMvc mvc;
     private MessageManager messageManager;
 
@@ -30,31 +31,32 @@ public class MessageControllerTest extends BaseControllerTest {
     }
 
     @Test
-    public void test_Put_Message_Adds_Message_To_MessageManager() throws Exception {
-        Message message = new Message();
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.put("/message")
-                .content(gson.toJson(message))
+    public void test_Put_Reply_Adds_Reply_To_MessageManager() throws Exception {
+        Reply reply = new Reply("platform", "target", "message");
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.put("/reply")
+                .content(gson.toJson(reply))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);
 
         mvc.perform(withValidSessionKey(requestBuilder)).andExpect(status().isOk());
-        verify(messageManager).addMessage(eq(message));
+        verify(messageManager).addReply(eq(reply));
         verifyNoMoreInteractions(messageManager);
     }
 
     @Test
-    public void test_Post_Messages_Returns_List_Of_Messages_For_A_Client_ID() throws Exception {
+    public void test_Post_Replies_Returns_List_Of_Replies_For_A_Matcher_List_Of_Platforms() throws Exception {
         ArrayList<String> matchers = new ArrayList<>();
-        matchers.add("111");
+        matchers.add("platform1");
+        matchers.add("platform2");
         MatcherList matcherList = new MatcherList(VALID_CLIENT_ID, matchers);
 
         ArrayList<Message> expected = new ArrayList<>();
         expected.add(new Message("32487", "Platform1", "Message"));
         expected.add(new Message("09548", "Platform1", "Message2"));
         expected.add(new Message("44129", "Platform2", "Message3"));
-        doReturn(expected).when(messageManager).getMessagesExcludingOnesDeletedForID(eq(matchers), eq(VALID_CLIENT_ID));
+        doReturn(expected).when(messageManager).getRepliesExcludingOnesDeletedForID(eq(matchers), eq(VALID_CLIENT_ID));
 
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/messages")
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/replies")
                 .content(gson.toJson(matcherList))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);
@@ -62,23 +64,23 @@ public class MessageControllerTest extends BaseControllerTest {
         mvc.perform(withValidSessionKey(requestBuilder))
                 .andExpect(status().isOk())
                 .andExpect(content().json(gson.toJson(expected)));
-        verify(messageManager).getMessagesExcludingOnesDeletedForID(eq(matchers), eq(VALID_CLIENT_ID));
+        verify(messageManager).getRepliesExcludingOnesDeletedForID(eq(matchers), eq(VALID_CLIENT_ID));
         verifyNoMoreInteractions(messageManager);
     }
 
     @Test
-    public void test_Delete_Message_Marks_Message_As_Processed_In_MessageManager() throws Exception {
+    public void test_Delete_Reply_Marks_Reply_As_Processed_In_MessageManager() throws Exception {
         Message message = new Message();
-        String messageID = "message-id";
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/message")
+        String replyID = "message-id";
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/reply")
                 .param("clientID", String.valueOf(VALID_CLIENT_ID))
-                .param("id", messageID)
+                .param("id", replyID)
                 .content(gson.toJson(message))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);
 
         mvc.perform(withValidSessionKey(requestBuilder)).andExpect(status().isOk());
-        verify(messageManager).markMessageAsProcessed(eq(messageID), eq(VALID_CLIENT_ID));
+        verify(messageManager).markReplyAsProcessed(eq(replyID), eq(VALID_CLIENT_ID));
         verifyNoMoreInteractions(messageManager);
     }
 }
