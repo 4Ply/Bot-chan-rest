@@ -1,9 +1,9 @@
 # Bot-chan-rest
+This is the rest server used to handle requests from http://www.bot-chan.com
+
+
 [![Twitter](https://img.shields.io/badge/twitter-@4Ply_ZA-blue.svg)](https://twitter.com/4Ply_ZA)
 [![Build Status](https://travis-ci.org/4Ply/Bot-chan-rest.svg?branch=master)](https://travis-ci.org/4Ply/Bot-chan-rest)
-
-
-This is the rest server used to handle requests from http://www.bot-chan.com
 
 
 ### Definitions:
