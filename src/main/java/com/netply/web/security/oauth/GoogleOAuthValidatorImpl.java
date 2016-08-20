@@ -41,7 +41,7 @@ public class GoogleOAuthValidatorImpl implements GoogleOAuthValidator {
 
             // Get profile information from payload
             String email = payload.getEmail();
-            boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
+            boolean emailVerified = payload.getEmailVerified();
             String name = (String) payload.get("name");
             String pictureUrl = (String) payload.get("picture");
             String locale = (String) payload.get("locale");
