@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -51,7 +52,25 @@ public class LoginControllerTest extends BaseControllerTest {
     }
 
     @Test
-    public void testLoginCheck() throws Exception {
+    public void test_Login_Check_Returns_Valid_Response_With_Success_Result_When_SessionKey_Is_Valid() throws Exception {
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/loginCheck")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
 
+        mvc.perform(withValidSessionKey(requestBuilder))
+                .andExpect(status().isOk())
+                .andExpect(content().json(gson.toJson(new BasicResultResponse(true, VALID_SESSION_KEY))));
+    }
+
+    @Test
+    public void test_Login_Check_Returns_Valid_Response_With_Negative_Result_When_SessionKey_Is_InValid() throws Exception {
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/loginCheck")
+                .param("sessionKey", INVALID_SESSION_KEY)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(content().json(gson.toJson(new BasicResultResponse(false, INVALID_SESSION_KEY))));
     }
 }
