@@ -101,7 +101,7 @@
         <dependency>
             <groupId>com.github.4Ply</groupId>
             <artifactId>Bot-chan-rest-models</artifactId>
-            <version>-bb0ce346ee-1</version>
+            <version>a9460c5409</version>
         </dependency>
 
         <dependency>
