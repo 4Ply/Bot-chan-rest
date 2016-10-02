@@ -17,5 +17,5 @@ public interface MessageManager {
 
     void markReplyAsProcessed(String messageID, Integer clientID);
 
-    List<Reply> getRepliesExcludingOnesDeletedForID(ArrayList<String> platformMatchers, Integer integer);
+    List<Reply> getRepliesExcludingOnesDeletedForID(ArrayList<String> targetMatchers, Integer integer);
 }

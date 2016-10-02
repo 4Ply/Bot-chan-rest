@@ -1,7 +1,7 @@
 package com.netply.botchan.web.rest;
 
 import com.google.gson.Gson;
-import com.netply.botchan.web.rest.persistence.Database;
+import com.netply.botchan.web.rest.persistence.LoginDatabaseImpl;
 import com.netply.web.security.login.SessionHandler;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -32,19 +32,19 @@ public class BaseControllerTest {
     public static final int INVALID_CLIENT_ID = -1;
     public static final int VALID_CLIENT_ID = 10;
     protected Gson gson = new Gson();
-    protected Database database;
+    protected LoginDatabaseImpl loginDatabaseImpl;
     protected SessionHandler sessionHandler;
 
 
     @Before
     public void setUpSessionHandler() throws Exception {
-        database = mock(Database.class);
-        doReturn(true).when(database).checkSessionKey(eq(VALID_SESSION_KEY));
-        doReturn(false).when(database).checkSessionKey(AdditionalMatchers.not(eq(VALID_SESSION_KEY)));
-        doReturn(true).when(database).isAuthorisedForClientId(eq(VALID_SESSION_KEY), eq(VALID_CLIENT_ID));
-        doReturn(false).when(database).isAuthorisedForClientId(AdditionalMatchers.not(eq(VALID_SESSION_KEY)), AdditionalMatchers.not(eq(VALID_CLIENT_ID)));
+        loginDatabaseImpl = mock(LoginDatabaseImpl.class);
+        doReturn(true).when(loginDatabaseImpl).checkSessionKey(eq(VALID_SESSION_KEY));
+        doReturn(false).when(loginDatabaseImpl).checkSessionKey(AdditionalMatchers.not(eq(VALID_SESSION_KEY)));
+        doReturn(true).when(loginDatabaseImpl).isAuthorisedForClientId(eq(VALID_SESSION_KEY), eq(VALID_CLIENT_ID));
+        doReturn(false).when(loginDatabaseImpl).isAuthorisedForClientId(AdditionalMatchers.not(eq(VALID_SESSION_KEY)), AdditionalMatchers.not(eq(VALID_CLIENT_ID)));
 
-        sessionHandler = new SessionHandler(database);
+        sessionHandler = new SessionHandler(loginDatabaseImpl);
     }
 
     protected void testInvalidSession(MockMvc mvc, String url) throws Exception {

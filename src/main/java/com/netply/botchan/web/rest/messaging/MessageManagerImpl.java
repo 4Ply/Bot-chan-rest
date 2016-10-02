@@ -74,10 +74,10 @@ public class MessageManagerImpl implements MessageManager {
     }
 
     @Override
-    public List<Reply> getRepliesExcludingOnesDeletedForID(ArrayList<String> platformMatchers, Integer integer) {
+    public List<Reply> getRepliesExcludingOnesDeletedForID(ArrayList<String> targetMatchers, Integer integer) {
         return replyMap.keySet().stream()
                 .distinct()
-                .filter(reply -> platformMatchers.contains(reply.getPlatform()))
+                .filter(reply -> targetMatchers.contains(reply.getTarget()))
                 .filter(reply -> !replyMap.get(reply).contains(integer))
                 .collect(Collectors.toList());
     }

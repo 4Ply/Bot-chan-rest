@@ -1,10 +1,12 @@
 package com.netply.botchan.web.rest;
 
+import com.netply.botchan.web.rest.games.TrackedPlayerDatabase;
+import com.netply.botchan.web.rest.games.TrackedPlayerDatabaseImpl;
 import com.netply.botchan.web.rest.games.TrackedPlayerManager;
 import com.netply.botchan.web.rest.games.TrackedPlayerManagerImpl;
 import com.netply.botchan.web.rest.messaging.MessageManager;
 import com.netply.botchan.web.rest.messaging.MessageManagerImpl;
-import com.netply.botchan.web.rest.persistence.Database;
+import com.netply.botchan.web.rest.persistence.LoginDatabaseImpl;
 import com.netply.web.security.login.LoginDatabase;
 import com.netply.web.security.login.LoginHandler;
 import com.netply.web.security.login.SessionHandler;
@@ -39,7 +41,7 @@ public class AppConfig {
 
     @Bean
     public LoginDatabase loginDatabase() throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
-        return new Database(mysqlIp, mysqlPort, mysqlDb, mysqlUser, mysqlPassword);
+        return new LoginDatabaseImpl(mysqlIp, mysqlPort, mysqlDb, mysqlUser, mysqlPassword);
     }
 
     @Bean
@@ -53,7 +55,12 @@ public class AppConfig {
     }
 
     @Bean
-    public TrackedPlayerManager trackedPlayerManager() {
-        return new TrackedPlayerManagerImpl();
+    public TrackedPlayerDatabase trackedPlayerDatabase() throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+        return new TrackedPlayerDatabaseImpl(mysqlIp, mysqlPort, mysqlDb, mysqlUser, mysqlPassword);
+    }
+
+    @Bean
+    public TrackedPlayerManager trackedPlayerManager() throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+        return new TrackedPlayerManagerImpl(trackedPlayerDatabase());
     }
 }

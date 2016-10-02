@@ -53,8 +53,8 @@ public class ReplyControllerInvalidSessionKeyTest extends BaseControllerTest {
 
     private void testUnauthorisedPostRepliesRequest(String sessionKey, int clientId) throws Exception {
         ArrayList<String> matchers = new ArrayList<>();
-        matchers.add("platform1");
-        matchers.add("platform2");
+        matchers.add("12312");
+        matchers.add("54345");
         MatcherList matcherList = new MatcherList(clientId, matchers);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/replies")
@@ -78,7 +78,7 @@ public class ReplyControllerInvalidSessionKeyTest extends BaseControllerTest {
     }
 
     private void testDeleteMessageUnauthorised(String sessionKey, int clientId) throws Exception {
-        Reply reply = new Reply("platform", "target", "message");
+        Reply reply = new Reply("target", "message");
         String messageID = "message-id";
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/reply")
                 .param("clientID", String.valueOf(clientId))

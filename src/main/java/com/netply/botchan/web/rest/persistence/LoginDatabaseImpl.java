@@ -9,43 +9,12 @@ import java.sql.*;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-public class Database implements LoginDatabase {
-    private final static Logger LOGGER = Logger.getLogger(Database.class.getName());
-    private Connection connection;
-    private String mysqlIp;
-    private int mysqlPort;
-    private String mysqlDb;
-    private final String mysqlUser;
-    private final String mysqlPassword;
+public class LoginDatabaseImpl extends BaseDatabase implements LoginDatabase {
+    private final static Logger LOGGER = Logger.getLogger(LoginDatabaseImpl.class.getName());
 
 
-    public Database(String mysqlIp, int mysqlPort, String mysqlDb, String mysqlUser, String mysqlPassword) throws ClassNotFoundException, IllegalAccessException, InstantiationException, SQLException {
-        this.mysqlIp = mysqlIp;
-        this.mysqlPort = mysqlPort;
-        this.mysqlDb = mysqlDb;
-        this.mysqlUser = mysqlUser;
-        this.mysqlPassword = mysqlPassword;
-        Class.forName("com.mysql.jdbc.Driver").newInstance();
-        connection = createConnection();
-    }
-
-    private Connection createConnection() throws SQLException {
-        return createConnectionForCredentials(mysqlIp, mysqlPort, mysqlDb, mysqlUser, mysqlPassword);
-    }
-
-    private Connection createConnectionForCredentials(String mysqlIp, int mysqlPort, String mysqlDb, String mysqlUser, String mysqlPassword) throws SQLException {
-        return DriverManager.getConnection("jdbc:mysql://" + mysqlIp + ":" + mysqlPort + "/" + mysqlDb, mysqlUser, mysqlPassword);
-    }
-
-    private Connection getConnection() {
-        try {
-            if (connection == null || connection.isClosed()) {
-                connection = createConnection();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return connection;
+    public LoginDatabaseImpl(String mysqlIp, int mysqlPort, String mysqlDb, String mysqlUser, String mysqlPassword) throws ClassNotFoundException, IllegalAccessException, InstantiationException, SQLException {
+        super(mysqlIp, mysqlPort, mysqlDb, mysqlUser, mysqlPassword);
     }
 
     @Override
@@ -63,7 +32,7 @@ public class Database implements LoginDatabase {
                         preparedStatement2.setInt(1, userId);
                         preparedStatement2.executeUpdate();
                     } catch (SQLException e) {
-                        Database.LOGGER.severe(e.getMessage());
+                        LoginDatabaseImpl.LOGGER.severe(e.getMessage());
                         e.printStackTrace();
                     }
                     if (userLocked) {
@@ -76,7 +45,7 @@ public class Database implements LoginDatabase {
                 throw new InvalidCredentialsException();
             }
         } catch (SQLException e) {
-            Database.LOGGER.severe(e.getMessage());
+            LoginDatabaseImpl.LOGGER.severe(e.getMessage());
             e.printStackTrace();
         }
 
@@ -93,7 +62,7 @@ public class Database implements LoginDatabase {
 
             return uuid;
         } catch (SQLException e) {
-            Database.LOGGER.severe(e.getMessage());
+            LoginDatabaseImpl.LOGGER.severe(e.getMessage());
             e.printStackTrace();
         }
         return null;
@@ -110,14 +79,14 @@ public class Database implements LoginDatabase {
                     preparedStatement2.setInt(1, resultSet.getInt("id"));
                     preparedStatement2.executeUpdate();
                 } catch (SQLException e) {
-                    Database.LOGGER.severe(e.getMessage());
+                    LoginDatabaseImpl.LOGGER.severe(e.getMessage());
                     e.printStackTrace();
                 }
 
                 return true;
             }
         } catch (SQLException e) {
-            Database.LOGGER.severe(e.getMessage());
+            LoginDatabaseImpl.LOGGER.severe(e.getMessage());
             e.printStackTrace();
         }
 
@@ -135,7 +104,7 @@ public class Database implements LoginDatabase {
                 return true;
             }
         } catch (SQLException e) {
-            Database.LOGGER.severe(e.getMessage());
+            LoginDatabaseImpl.LOGGER.severe(e.getMessage());
             e.printStackTrace();
         }
 
@@ -167,7 +136,7 @@ public class Database implements LoginDatabase {
                 return new Account(resultSet.getString("username"), resultSet.getString("password"));
             }
         } catch (SQLException e) {
-            Database.LOGGER.severe(e.getMessage());
+            LoginDatabaseImpl.LOGGER.severe(e.getMessage());
             e.printStackTrace();
         }
         return null;

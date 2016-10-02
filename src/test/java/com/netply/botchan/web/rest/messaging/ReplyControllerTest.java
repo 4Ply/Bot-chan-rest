@@ -32,7 +32,7 @@ public class ReplyControllerTest extends BaseControllerTest {
 
     @Test
     public void test_Put_Reply_Adds_Reply_To_MessageManager() throws Exception {
-        Reply reply = new Reply("platform", "target", "message");
+        Reply reply = new Reply("target", "message");
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.put("/reply")
                 .content(gson.toJson(reply))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -46,14 +46,15 @@ public class ReplyControllerTest extends BaseControllerTest {
     @Test
     public void test_Post_Replies_Returns_List_Of_Replies_For_A_Matcher_List_Of_Platforms() throws Exception {
         ArrayList<String> matchers = new ArrayList<>();
-        matchers.add("platform1");
-        matchers.add("platform2");
+        matchers.add("32487");
+        matchers.add("09548");
+        matchers.add("44129");
         MatcherList matcherList = new MatcherList(VALID_CLIENT_ID, matchers);
 
-        ArrayList<Message> expected = new ArrayList<>();
-        expected.add(new Message("32487", "Platform1", "Message"));
-        expected.add(new Message("09548", "Platform1", "Message2"));
-        expected.add(new Message("44129", "Platform2", "Message3"));
+        ArrayList<Reply> expected = new ArrayList<>();
+        expected.add(new Reply("32487", "sender"));
+        expected.add(new Reply("09548", "sender"));
+        expected.add(new Reply("44129", "sender"));
         doReturn(expected).when(messageManager).getRepliesExcludingOnesDeletedForID(eq(matchers), eq(VALID_CLIENT_ID));
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/replies")

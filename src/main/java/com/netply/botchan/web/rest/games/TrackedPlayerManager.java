@@ -11,5 +11,5 @@ public interface TrackedPlayerManager {
 
     List<User> getTrackers(String playerName);
 
-    List<User> getAllTrackedPlayers(String platform);
+    List<String> getAllTrackedPlayers(String platform);
 }
