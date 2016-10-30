@@ -19,3 +19,6 @@ This is the rest server used to handle requests from http://www.bot-chan.com
 |-------------|----------|-------------|----------|
 |POST         |/login     |Authenticate with the application to recieve a session token (which is valid for 5 minutes)| username, password
 |POST         |/loginCheck|Check if a sessionKey is valid (and has not timed out), and refresh the token's validity timeout (if valid)| sessionKey
+|POST         |/messages  |Get Messages (excluding messages marked as deleted) for an ID that match one of the regex patterns| sessionKey,MatcherList\<ClientID, Regex>
+|PUT          |/message   |Add a message |SessionKey, Message\<Message, Sender>
+|DELETE       |/message   |Delete a message |SessionKey, ClientID, MessageID
