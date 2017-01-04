@@ -7,7 +7,9 @@ import com.netply.web.security.login.SessionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class MessageController {
@@ -35,9 +37,11 @@ public class MessageController {
     @RequestMapping(value = "/message", method = RequestMethod.PUT)
     public void addMessage(
             @RequestParam(value = "sessionKey") String sessionKey,
+            @RequestParam(value = "clientID") Integer clientID,
             @RequestBody Message message) {
         sessionHandler.checkSessionKey(sessionKey);
 
+        message.setSender(getSenderUniqueID(message.getSender(), clientID));
         messageManager.addMessage(message);
     }
 
@@ -69,7 +73,10 @@ public class MessageController {
         Integer clientID = matcherList.getId();
         sessionHandler.checkClientIDAuthorisation(sessionKey, clientID);
 
-        return messageManager.getRepliesExcludingOnesDeletedForID(matcherList.getMatchers(), clientID);
+        ArrayList<String> matchers = new ArrayList<>(matcherList.getMatchers().stream().distinct().map(s -> getSenderUniqueID(s, clientID)).collect(Collectors.toList()));
+        List<Reply> repliesExcludingOnesDeletedForID = messageManager.getRepliesExcludingOnesDeletedForID(matchers, clientID);
+        repliesExcludingOnesDeletedForID.forEach(reply -> reply.setTarget(getSenderIDFromUniqueID(reply.getTarget())));
+        return repliesExcludingOnesDeletedForID;
     }
 
     @RequestMapping(value = "/reply", method = RequestMethod.DELETE)
@@ -81,5 +88,13 @@ public class MessageController {
         sessionHandler.checkClientIDAuthorisation(sessionKey, clientID);
 
         messageManager.markReplyAsProcessed(replyID, clientID);
+    }
+
+    private String getSenderUniqueID(String sender, Integer clientID) {
+        return sender + "___" + clientID;
+    }
+
+    private String getSenderIDFromUniqueID(String target) {
+        return target.split("___")[0];
     }
 }

@@ -45,17 +45,28 @@ public class ReplyControllerTest extends BaseControllerTest {
 
     @Test
     public void test_Post_Replies_Returns_List_Of_Replies_For_A_Matcher_List_Of_Platforms() throws Exception {
-        ArrayList<String> matchers = new ArrayList<>();
-        matchers.add("32487");
-        matchers.add("09548");
-        matchers.add("44129");
-        MatcherList matcherList = new MatcherList(VALID_CLIENT_ID, matchers);
+        ArrayList<String> inputMatchers = new ArrayList<>();
+        inputMatchers.add("32487");
+        inputMatchers.add("09548");
+        inputMatchers.add("44129");
+
+        ArrayList<String> expectedMatchers = new ArrayList<>();
+        for (String inputMatcher : inputMatchers) {
+            expectedMatchers.add(inputMatcher + "___" + VALID_CLIENT_ID);
+        }
+
+        MatcherList matcherList = new MatcherList(VALID_CLIENT_ID, inputMatchers);
 
         ArrayList<Reply> expected = new ArrayList<>();
         expected.add(new Reply("32487", "sender"));
         expected.add(new Reply("09548", "sender"));
         expected.add(new Reply("44129", "sender"));
-        doReturn(expected).when(messageManager).getRepliesExcludingOnesDeletedForID(eq(matchers), eq(VALID_CLIENT_ID));
+        ArrayList<Reply> toReturn = new ArrayList<>();
+        for (Reply reply : expected) {
+            toReturn.add(new Reply(reply.getTarget() + "___" + VALID_CLIENT_ID, reply.getMessage()));
+        }
+
+        doReturn(toReturn).when(messageManager).getRepliesExcludingOnesDeletedForID(eq(expectedMatchers), eq(VALID_CLIENT_ID));
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/replies")
                 .content(gson.toJson(matcherList))
@@ -65,7 +76,8 @@ public class ReplyControllerTest extends BaseControllerTest {
         mvc.perform(withValidSessionKey(requestBuilder))
                 .andExpect(status().isOk())
                 .andExpect(content().json(gson.toJson(expected)));
-        verify(messageManager).getRepliesExcludingOnesDeletedForID(eq(matchers), eq(VALID_CLIENT_ID));
+
+        verify(messageManager).getRepliesExcludingOnesDeletedForID(eq(expectedMatchers), eq(VALID_CLIENT_ID));
         verifyNoMoreInteractions(messageManager);
     }
 

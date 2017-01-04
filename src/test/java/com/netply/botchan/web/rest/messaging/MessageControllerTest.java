@@ -33,11 +33,13 @@ public class MessageControllerTest extends BaseControllerTest {
     public void test_Put_Message_Adds_Message_To_MessageManager() throws Exception {
         Message message = new Message();
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.put("/message")
+                .param("clientID", String.valueOf(VALID_CLIENT_ID))
                 .content(gson.toJson(message))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);
 
         mvc.perform(withValidSessionKey(requestBuilder)).andExpect(status().isOk());
+        message.setSender(null + "___" + VALID_CLIENT_ID);
         verify(messageManager).addMessage(eq(message));
         verifyNoMoreInteractions(messageManager);
     }

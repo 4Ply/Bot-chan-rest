@@ -33,6 +33,20 @@ public class ReplyControllerInvalidSessionKeyTest extends BaseControllerTest {
     public void test_Put_Reply_With_Valid_Invalid_Session_Key_Does_Not_Add_Reply_To_MessageManager_And_Returns_Error() throws Exception {
         Message message = new Message();
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.put("/message")
+                .param("clientID", String.valueOf(VALID_CLIENT_ID))
+                .content(gson.toJson(message))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON);
+
+        testInvalidSession(mvc, requestBuilder);
+        verify(messageManager, never()).addMessage(eq(message));
+    }
+
+    @Test
+    public void test_Put_Reply_With_Valid_Invalid_ClientID_Does_Not_Add_Reply_To_MessageManager_And_Returns_Error() throws Exception {
+        Message message = new Message();
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.put("/message")
+                .param("clientID", String.valueOf(INVALID_CLIENT_ID))
                 .content(gson.toJson(message))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);
