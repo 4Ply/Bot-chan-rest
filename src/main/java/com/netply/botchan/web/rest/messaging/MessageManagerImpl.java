@@ -33,10 +33,10 @@ public class MessageManagerImpl implements MessageManager {
 
     @Override
     public void markMessageAsProcessed(String messageID, Integer clientID) {
-        messageMap.keySet().stream()
+        List<Message> messageList = messageMap.keySet().stream()
                 .filter(message -> messageID.equals(message.getId()))
-                .distinct()
-                .forEach(message -> messageMap.add(message, clientID));
+                .distinct().collect(Collectors.toList());
+        messageList.forEach(message -> messageMap.add(message, clientID));
     }
 
     @Override
@@ -67,10 +67,10 @@ public class MessageManagerImpl implements MessageManager {
 
     @Override
     public void markReplyAsProcessed(String replyID, Integer clientID) {
-        replyMap.keySet().stream()
+        List<Reply> replyList = replyMap.keySet().stream()
                 .filter(reply -> replyID.equals(reply.getId()))
-                .distinct()
-                .forEach(message -> replyMap.add(message, clientID));
+                .distinct().collect(Collectors.toList());
+        replyList.forEach(message -> replyMap.add(message, clientID));
     }
 
     @Override
