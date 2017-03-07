@@ -23,7 +23,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().fullyAuthenticated().and()
-                .formLogin().loginPage("/logmein").and()
+//                .formLogin().loginPage("/logmein").and()
                 .sessionManagement().and()
                 .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/").and()
                 .httpBasic().and()
