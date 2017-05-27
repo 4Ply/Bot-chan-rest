@@ -9,6 +9,8 @@ public interface TrackedPlayerManager {
 
     void trackPlayer(User user, String playerName);
 
+    void unTrackPlayer(User user, String playerName);
+
     List<User> getTrackers(String playerName);
 
     List<String> getAllTrackedPlayers(String platform);

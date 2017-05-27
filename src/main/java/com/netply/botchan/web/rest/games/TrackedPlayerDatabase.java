@@ -9,6 +9,8 @@ public interface TrackedPlayerDatabase {
 
     void addTrackedPlayer(User user, String playerName);
 
+    void removeTrackedPlayer(User user, String playerName);
+
     List<User> getTrackersForPlayerName(String playerName);
 
     List<String> getAllTrackedPlayersForPlatform(String platform);

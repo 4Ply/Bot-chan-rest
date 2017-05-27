@@ -33,6 +33,11 @@ public class TrackedPlayerManagerImpl implements TrackedPlayerManager {
     }
 
     @Override
+    public void unTrackPlayer(User user, String playerName) {
+        trackedPlayerDatabase.removeTrackedPlayer(user, playerName);
+    }
+
+    @Override
     public List<User> getTrackers(String playerName) {
         return trackedPlayerDatabase.getTrackersForPlayerName(playerName)
                 .stream().distinct().collect(Collectors.toList());

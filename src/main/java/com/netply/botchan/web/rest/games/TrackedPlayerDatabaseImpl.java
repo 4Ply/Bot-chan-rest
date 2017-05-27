@@ -52,6 +52,19 @@ public class TrackedPlayerDatabaseImpl extends BaseDatabase implements TrackedPl
     }
 
     @Override
+    public void removeTrackedPlayer(User user, String playerName) {
+        try (PreparedStatement preparedStatement = getConnection().prepareStatement("DELETE FROM tracked_players WHERE clientID = ? AND platform = ? AND playerName = ?")) {
+            preparedStatement.setString(1, user.getClientID());
+            preparedStatement.setString(2, user.getPlatform());
+            preparedStatement.setString(3, playerName);
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public List<User> getTrackersForPlayerName(String playerName) {
         try (PreparedStatement preparedStatement = getConnection().prepareStatement("SELECT clientID, platform FROM tracked_players WHERE playerName = ?")) {
             preparedStatement.setString(1, playerName);

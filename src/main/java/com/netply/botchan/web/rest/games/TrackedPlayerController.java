@@ -44,6 +44,19 @@ public class TrackedPlayerController {
         trackedPlayerManager.trackPlayer(trackPlayerRequest.getUser(), trackPlayerRequest.getPlayerName());
     }
 
+    @RequestMapping(value = "/trackedPlayer", consumes = "application/json", produces = "application/json", method = RequestMethod.DELETE)
+    public void unTrackPlayer(
+            @RequestParam(value = "sessionKey") String sessionKey,
+            @RequestBody TrackPlayerRequest trackPlayerRequest) {
+        sessionHandler.checkSessionKey(sessionKey);
+
+        if (trackPlayerRequest.getUser().getPlatform() == null) {
+            throw new InvalidParameterException();
+        }
+
+        trackedPlayerManager.unTrackPlayer(trackPlayerRequest.getUser(), trackPlayerRequest.getPlayerName());
+    }
+
     @RequestMapping(value = "/trackers", produces = "application/json", method = RequestMethod.GET)
     public @ResponseBody List<User> getTrackers(
             @RequestParam(value = "sessionKey") String sessionKey,
