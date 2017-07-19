@@ -32,9 +32,9 @@ public class EventManagerImpl implements EventManager {
     @Override
     public void markEventAsProcessed(String eventID, Integer clientID) {
         eventMap.keySet().stream()
-                .filter(message -> eventID.equals(message.getId()))
+                .filter(event -> eventID.equals(event.getId()))
                 .distinct()
-                .forEach(message -> eventMap.add(message, clientID));
+                .forEach(event -> eventMap.add(event, clientID));
     }
 
     @Override
@@ -42,7 +42,7 @@ public class EventManagerImpl implements EventManager {
         return eventMap.keySet().stream()
                 .distinct()
                 .filter(doesMessageMatchAnyMessageMatcherPattern(eventTypeMatchers))
-                .filter(message -> !eventMap.get(message).contains(integer))
+                .filter(event -> !eventMap.get(event).contains(integer))
                 .collect(Collectors.toList());
     }
 

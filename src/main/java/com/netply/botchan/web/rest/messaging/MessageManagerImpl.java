@@ -2,83 +2,51 @@ package com.netply.botchan.web.rest.messaging;
 
 import com.netply.botchan.web.model.Message;
 import com.netply.botchan.web.model.Reply;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
+import com.netply.botchan.web.model.ToUserMessage;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
+@Component
 public class MessageManagerImpl implements MessageManager {
-    private static MessageManagerImpl instance;
-    private MultiValueMap<Message, Integer> messageMap = new LinkedMultiValueMap<>();
-    private MultiValueMap<Reply, Integer> replyMap = new LinkedMultiValueMap<>();
+    private MessageDatabase messageDatabase;
 
 
-    @Deprecated // Replace with DB
-    public static MessageManagerImpl getInstance() {
-        if (instance == null) {
-            instance = new MessageManagerImpl();
-        }
-        return instance;
+    @Autowired
+    public MessageManagerImpl(MessageDatabase messageDatabase) {
+        this.messageDatabase = messageDatabase;
     }
 
     @Override
     public void addMessage(Message message) {
-        message.setId(UUID.randomUUID().toString());
-        messageMap.add(message, -1);
+        messageDatabase.addMessage(message.getSender(), message.getMessage(), message.getPlatform(), message.isDirect());
     }
 
     @Override
-    public void markMessageAsProcessed(String messageID, Integer clientID) {
-        List<Message> messageList = messageMap.keySet().stream()
-                .filter(message -> messageID.equals(message.getId()))
-                .distinct().collect(Collectors.toList());
-        messageList.forEach(message -> messageMap.add(message, clientID));
+    public void markMessageAsProcessed(int messageID, String platform) {
+        messageDatabase.markMessageAsProcessed(messageID, platform);
     }
 
     @Override
-    public List<Message> getMessagesExcludingOnesDeletedForID(ArrayList<String> messageMatchers, Integer integer) {
-        return messageMap.keySet().stream()
-                .distinct()
-                .filter(doesMessageMatchAnyMessageMatcherPattern(messageMatchers))
-                .filter(message -> !messageMap.get(message).contains(integer))
-                .collect(Collectors.toList());
-    }
-
-    private Predicate<Message> doesMessageMatchAnyMessageMatcherPattern(ArrayList<String> messageMatchers) {
-        return message -> {
-            for (String messageMatcher : messageMatchers) {
-                if (message.getMessage().matches(messageMatcher)) {
-                    return true;
-                }
-            }
-            return false;
-        };
+    public List<Message> getUnProcessedMessagesForPlatform(ArrayList<String> messageMatchers, String platform) {
+        return messageDatabase.getUnProcessedMessagesForPlatform(messageMatchers, platform);
     }
 
     @Override
     public void addReply(Reply reply) {
-        reply.setId(UUID.randomUUID().toString());
-        replyMap.add(reply, -1);
+        Message message = messageDatabase.getMessage(reply.getOriginalMessageID());
+        messageDatabase.addReply(message.getSender(), reply.getMessage(), message.getPlatform());
     }
 
     @Override
-    public void markReplyAsProcessed(String replyID, Integer clientID) {
-        List<Reply> replyList = replyMap.keySet().stream()
-                .filter(reply -> replyID.equals(reply.getId()))
-                .distinct().collect(Collectors.toList());
-        replyList.forEach(message -> replyMap.add(message, clientID));
+    public void markReplyAsProcessed(int replyID, String platform) {
+        messageDatabase.markReplyAsProcessed(replyID, platform);
     }
 
     @Override
-    public List<Reply> getRepliesExcludingOnesDeletedForID(ArrayList<String> targetMatchers, Integer integer) {
-        return replyMap.keySet().stream()
-                .distinct()
-                .filter(reply -> targetMatchers.contains(reply.getTarget()))
-                .filter(reply -> !replyMap.get(reply).contains(integer))
-                .collect(Collectors.toList());
+    public List<ToUserMessage> getUnProcessedReplies(ArrayList<String> targetMatchers, String platform) {
+        return messageDatabase.getUnProcessedReplies(targetMatchers, platform);
     }
 }

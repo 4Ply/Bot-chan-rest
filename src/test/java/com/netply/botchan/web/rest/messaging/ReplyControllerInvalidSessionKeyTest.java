@@ -69,7 +69,7 @@ public class ReplyControllerInvalidSessionKeyTest extends BaseControllerTest {
         ArrayList<String> matchers = new ArrayList<>();
         matchers.add("12312");
         matchers.add("54345");
-        MatcherList matcherList = new MatcherList(clientId, matchers);
+        MatcherList matcherList = new MatcherList("", matchers);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/replies")
                 .content(gson.toJson(matcherList))
@@ -77,7 +77,7 @@ public class ReplyControllerInvalidSessionKeyTest extends BaseControllerTest {
                 .accept(MediaType.APPLICATION_JSON);
 
         mvc.perform(requestBuilder.param("sessionKey", sessionKey)).andExpect(status().isUnauthorized());
-        verify(messageManager, never()).getRepliesExcludingOnesDeletedForID(any(matchers.getClass()), anyInt());
+        verify(messageManager, never()).getUnProcessedReplies(any(matchers.getClass()), anyString());
         verifyNoMoreInteractions(messageManager);
     }
 
@@ -92,7 +92,7 @@ public class ReplyControllerInvalidSessionKeyTest extends BaseControllerTest {
     }
 
     private void testDeleteMessageUnauthorised(String sessionKey, int clientId) throws Exception {
-        Reply reply = new Reply("target", "message");
+        Reply reply = new Reply(0, "message");
         String messageID = "message-id";
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/reply")
                 .param("clientID", String.valueOf(clientId))
@@ -102,7 +102,7 @@ public class ReplyControllerInvalidSessionKeyTest extends BaseControllerTest {
                 .accept(MediaType.APPLICATION_JSON);
 
         mvc.perform(requestBuilder.param("sessionKey", sessionKey)).andExpect(status().isUnauthorized());
-        verify(messageManager, never()).markReplyAsProcessed(anyString(), anyInt());
+        verify(messageManager, never()).markReplyAsProcessed(anyInt(), anyString());
         verifyNoMoreInteractions(messageManager);
     }
 }

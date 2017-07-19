@@ -32,7 +32,7 @@ public class ReplyControllerTest extends BaseControllerTest {
 
     @Test
     public void test_Put_Reply_Adds_Reply_To_MessageManager() throws Exception {
-        Reply reply = new Reply("target", "message");
+        Reply reply = new Reply(0, "message");
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.put("/reply")
                 .content(gson.toJson(reply))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -55,18 +55,18 @@ public class ReplyControllerTest extends BaseControllerTest {
             expectedMatchers.add(inputMatcher + "___" + VALID_CLIENT_ID);
         }
 
-        MatcherList matcherList = new MatcherList(VALID_CLIENT_ID, inputMatchers);
+        MatcherList matcherList = new MatcherList("", inputMatchers);
 
         ArrayList<Reply> expected = new ArrayList<>();
-        expected.add(new Reply("32487", "sender"));
-        expected.add(new Reply("09548", "sender"));
-        expected.add(new Reply("44129", "sender"));
+        expected.add(new Reply(32487, "sender"));
+        expected.add(new Reply(9548, "sender"));
+        expected.add(new Reply(44129, "sender"));
         ArrayList<Reply> toReturn = new ArrayList<>();
         for (Reply reply : expected) {
-            toReturn.add(new Reply(reply.getTarget() + "___" + VALID_CLIENT_ID, reply.getMessage()));
+            toReturn.add(new Reply(reply.getOriginalMessageID(), reply.getMessage()));
         }
 
-        doReturn(toReturn).when(messageManager).getRepliesExcludingOnesDeletedForID(eq(expectedMatchers), eq(VALID_CLIENT_ID));
+        doReturn(toReturn).when(messageManager).getUnProcessedReplies(eq(expectedMatchers), anyString());
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/replies")
                 .content(gson.toJson(matcherList))
@@ -77,7 +77,7 @@ public class ReplyControllerTest extends BaseControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json(gson.toJson(expected)));
 
-        verify(messageManager).getRepliesExcludingOnesDeletedForID(eq(expectedMatchers), eq(VALID_CLIENT_ID));
+        verify(messageManager).getUnProcessedReplies(eq(expectedMatchers), anyString());
         verifyNoMoreInteractions(messageManager);
     }
 
@@ -93,7 +93,7 @@ public class ReplyControllerTest extends BaseControllerTest {
                 .accept(MediaType.APPLICATION_JSON);
 
         mvc.perform(withValidSessionKey(requestBuilder)).andExpect(status().isOk());
-        verify(messageManager).markReplyAsProcessed(eq(replyID), eq(VALID_CLIENT_ID));
+        verify(messageManager).markReplyAsProcessed(anyInt(), anyString());
         verifyNoMoreInteractions(messageManager);
     }
 }
