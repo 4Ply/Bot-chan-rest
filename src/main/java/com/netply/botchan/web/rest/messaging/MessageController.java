@@ -1,9 +1,6 @@
 package com.netply.botchan.web.rest.messaging;
 
-import com.netply.botchan.web.model.MatcherList;
-import com.netply.botchan.web.model.Message;
-import com.netply.botchan.web.model.Reply;
-import com.netply.botchan.web.model.ToUserMessage;
+import com.netply.botchan.web.model.*;
 import com.netply.web.security.login.SessionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -58,6 +55,15 @@ public class MessageController {
         sessionHandler.checkSessionKey(sessionKey);
 
         messageManager.addReply(reply);
+    }
+
+    @RequestMapping(value = "/directMessage", method = RequestMethod.PUT)
+    public void addDirectMessage(
+            @RequestParam(value = "sessionKey") String sessionKey,
+            @RequestBody ServerMessage serverMessage) {
+        sessionHandler.checkSessionKey(sessionKey);
+
+        messageManager.addDirectMessage(serverMessage);
     }
 
     @RequestMapping(value = "/replies", produces = "application/json", method = RequestMethod.POST)

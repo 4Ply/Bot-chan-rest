@@ -1,8 +1,7 @@
 package com.netply.botchan.web.rest.messaging;
 
-import com.netply.botchan.web.model.Message;
-import com.netply.botchan.web.model.Reply;
-import com.netply.botchan.web.model.ToUserMessage;
+import com.netply.botchan.web.model.*;
+import com.netply.botchan.web.rest.user.UserManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,11 +11,13 @@ import java.util.List;
 @Component
 public class MessageManagerImpl implements MessageManager {
     private MessageDatabase messageDatabase;
+    private UserManager userManager;
 
 
     @Autowired
-    public MessageManagerImpl(MessageDatabase messageDatabase) {
+    public MessageManagerImpl(MessageDatabase messageDatabase, UserManager userManager) {
         this.messageDatabase = messageDatabase;
+        this.userManager = userManager;
     }
 
     @Override
@@ -38,6 +39,16 @@ public class MessageManagerImpl implements MessageManager {
     public void addReply(Reply reply) {
         Message message = messageDatabase.getMessage(reply.getOriginalMessageID());
         messageDatabase.addReply(message.getSender(), reply.getMessage(), message.getPlatform());
+    }
+
+    @Override
+    public void addDirectMessage(ServerMessage serverMessage) {
+        User user = userManager.getDefaultUser(serverMessage.getUserID());
+        if (user != null) {
+            messageDatabase.addReply(user.getClientID(), serverMessage.getMessage(), user.getPlatform());
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
     @Override

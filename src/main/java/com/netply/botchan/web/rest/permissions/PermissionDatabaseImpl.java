@@ -1,7 +1,6 @@
 package com.netply.botchan.web.rest.permissions;
 
 import com.netply.botchan.web.rest.persistence.BaseDatabase;
-import com.netply.botchan.web.rest.persistence.LoginDatabaseImpl;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,12 +8,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class PermissionDatabaseImpl extends BaseDatabase implements PermissionDatabase {
-    private final static Logger LOGGER = Logger.getLogger(LoginDatabaseImpl.class.getName());
-
-
     public PermissionDatabaseImpl(String mysqlIp, int mysqlPort, String mysqlDb, String mysqlUser, String mysqlPassword) throws ClassNotFoundException, IllegalAccessException, InstantiationException, SQLException {
         super(mysqlIp, mysqlPort, mysqlDb, mysqlUser, mysqlPassword);
     }

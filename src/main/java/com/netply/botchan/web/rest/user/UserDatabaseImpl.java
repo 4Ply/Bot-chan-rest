@@ -1,17 +1,13 @@
 package com.netply.botchan.web.rest.user;
 
+import com.netply.botchan.web.model.User;
 import com.netply.botchan.web.rest.persistence.BaseDatabase;
-import com.netply.botchan.web.rest.persistence.LoginDatabaseImpl;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Logger;
 
 public class UserDatabaseImpl extends BaseDatabase implements UserDatabase {
-    private final static Logger LOGGER = Logger.getLogger(LoginDatabaseImpl.class.getName());
-
-
     public UserDatabaseImpl(String mysqlIp, int mysqlPort, String mysqlDb, String mysqlUser, String mysqlPassword) throws ClassNotFoundException, IllegalAccessException, InstantiationException, SQLException {
         super(mysqlIp, mysqlPort, mysqlDb, mysqlUser, mysqlPassword);
     }
@@ -56,7 +52,7 @@ public class UserDatabaseImpl extends BaseDatabase implements UserDatabase {
 
     @Override
     public void setUserID(int userID, String clientID, String platform) {
-        try (PreparedStatement preparedStatement = getConnection().prepareStatement("INSERT INTO platform_users (id, user_id, platform, client_id) VALUES (NULL, ?, ?, ?) ON DUPLICATE KEY UPDATE user_id = ?")) {
+        try (PreparedStatement preparedStatement = getConnection().prepareStatement("INSERT INTO platform_users (id, user_id, client_id, platform) VALUES (NULL, ?, ?, ?) ON DUPLICATE KEY UPDATE user_id = ?")) {
             int i = 0;
             preparedStatement.setInt(++i, userID);
             preparedStatement.setString(++i, clientID);
@@ -67,5 +63,22 @@ public class UserDatabaseImpl extends BaseDatabase implements UserDatabase {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public User getUser(int userID) {
+        try (PreparedStatement preparedStatement = getConnection().prepareStatement("SELECT client_id, platform FROM platform_users WHERE user_id = ? LIMIT 1")) {
+            int i = 0;
+            preparedStatement.setInt(++i, userID);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return new User(resultSet.getString("client_id"), resultSet.getString("platform"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

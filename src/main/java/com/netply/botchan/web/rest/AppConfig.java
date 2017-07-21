@@ -68,7 +68,7 @@ public class AppConfig {
 
     @Bean
     public MessageManager messageManager() throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
-        return new MessageManagerImpl(messageDatabase());
+        return new MessageManagerImpl(messageDatabase(), userManager());
     }
 
     @Bean

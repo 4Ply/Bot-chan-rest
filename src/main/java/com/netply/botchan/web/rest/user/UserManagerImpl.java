@@ -1,5 +1,6 @@
 package com.netply.botchan.web.rest.user;
 
+import com.netply.botchan.web.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,5 +23,10 @@ public class UserManagerImpl implements UserManager {
             return newUserID;
         }
         return userID;
+    }
+
+    @Override
+    public User getDefaultUser(int userID) {
+        return userDatabase.getUser(userID);
     }
 }
