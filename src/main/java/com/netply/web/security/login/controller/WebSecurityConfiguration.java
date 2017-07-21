@@ -1,10 +1,6 @@
 package com.netply.web.security.login.controller;
 
-import com.netply.web.security.oauth.GoogleOAuthValidator;
-import com.netply.web.security.oauth.GoogleOAuthValidatorImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -33,10 +29,5 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth, UserDetailsService userDetailsService) throws Exception {
         auth.userDetailsService(userDetailsService);
-    }
-
-    @Bean
-    public GoogleOAuthValidator googleOAuthValidator(@Value("${key.google.oauth.client_id}") String clientID) {
-        return new GoogleOAuthValidatorImpl(clientID);
     }
 }
