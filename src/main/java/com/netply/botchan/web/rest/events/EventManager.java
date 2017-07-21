@@ -8,7 +8,7 @@ import java.util.List;
 public interface EventManager {
     void addEvent(Event event);
 
-    void markEventAsProcessed(String eventID, Integer clientID);
+    void markEventAsProcessed(String eventID, String platform);
 
-    List<Event> getEventsExcludingOnesDeletedForID(ArrayList<String> eventTypeMatchers, Integer integer);
+    List<Event> getEventsExcludingOnesDeletedForID(ArrayList<String> eventTypeMatchers, String platform);
 }

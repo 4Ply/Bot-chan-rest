@@ -25,10 +25,9 @@ public class EventController {
             @RequestParam(value = "sessionKey") String sessionKey,
             @RequestBody MatcherList matcherList) {
         sessionHandler.checkSessionKey(sessionKey);
-        Integer clientID = matcherList.getId();
-        sessionHandler.checkClientIDAuthorisation(sessionKey, clientID);
+        String platform = matcherList.getPlatform();
 
-        return eventManager.getEventsExcludingOnesDeletedForID(matcherList.getMatchers(), clientID);
+        return eventManager.getEventsExcludingOnesDeletedForID(matcherList.getMatchers(), platform);
     }
 
     @RequestMapping(value = "/event", method = RequestMethod.PUT)
@@ -43,11 +42,10 @@ public class EventController {
     @RequestMapping(value = "/event", method = RequestMethod.DELETE)
     public void deleteEvent(
             @RequestParam(value = "sessionKey") String sessionKey,
-            @RequestParam(value = "clientID") Integer clientID,
+            @RequestParam(value = "platform") String platform,
             @RequestParam(value = "id") String eventID) {
         sessionHandler.checkSessionKey(sessionKey);
-        sessionHandler.checkClientIDAuthorisation(sessionKey, clientID);
 
-        eventManager.markEventAsProcessed(eventID, clientID);
+        eventManager.markEventAsProcessed(eventID, platform);
     }
 }

@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class EventManagerImpl implements EventManager {
     private static EventManagerImpl instance;
-    private MultiValueMap<Event, Integer> eventMap = new LinkedMultiValueMap<>();
+    private MultiValueMap<Event, String> eventMap = new LinkedMultiValueMap<>();
 
 
     @Deprecated // Replace with DB
@@ -26,23 +26,23 @@ public class EventManagerImpl implements EventManager {
     @Override
     public void addEvent(Event event) {
         event.setId(UUID.randomUUID().toString());
-        eventMap.add(event, -1);
+        eventMap.add(event, null);
     }
 
     @Override
-    public void markEventAsProcessed(String eventID, Integer clientID) {
+    public void markEventAsProcessed(String eventID, String platform) {
         eventMap.keySet().stream()
                 .filter(event -> eventID.equals(event.getId()))
                 .distinct()
-                .forEach(event -> eventMap.add(event, clientID));
+                .forEach(event -> eventMap.add(event, platform));
     }
 
     @Override
-    public List<Event> getEventsExcludingOnesDeletedForID(ArrayList<String> eventTypeMatchers, Integer integer) {
+    public List<Event> getEventsExcludingOnesDeletedForID(ArrayList<String> eventTypeMatchers, String platform) {
         return eventMap.keySet().stream()
                 .distinct()
                 .filter(doesMessageMatchAnyMessageMatcherPattern(eventTypeMatchers))
-                .filter(event -> !eventMap.get(event).contains(integer))
+                .filter(event -> !eventMap.get(event).contains(platform))
                 .collect(Collectors.toList());
     }
 
