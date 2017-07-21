@@ -30,19 +30,19 @@ import java.sql.SQLException;
 
 @Configuration
 public class AppConfig {
-    @Value("${key.database.mysql.ip}")
+    @Value("${mysql_ip}")
     private String mysqlIp;
 
-    @Value("${key.database.mysql.port}")
+    @Value("${mysql_port}")
     private int mysqlPort;
 
-    @Value("${key.database.mysql.db}")
+    @Value("${mysql_db}")
     private String mysqlDb;
 
-    @Value("${key.database.mysql.user}")
+    @Value("${mysql_user}")
     private String mysqlUser;
 
-    @Value("${key.database.mysql.password}")
+    @Value("${mysql_password}")
     private String mysqlPassword;
 
 
