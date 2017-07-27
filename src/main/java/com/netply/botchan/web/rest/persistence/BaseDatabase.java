@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+@Deprecated
 public class BaseDatabase {
     private Connection connection;
     private String mysqlIp;

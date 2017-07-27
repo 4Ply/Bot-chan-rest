@@ -6,10 +6,6 @@ import com.netply.botchan.web.rest.games.TrackedPlayerDatabase;
 import com.netply.botchan.web.rest.games.TrackedPlayerDatabaseImpl;
 import com.netply.botchan.web.rest.games.TrackedPlayerManager;
 import com.netply.botchan.web.rest.games.TrackedPlayerManagerImpl;
-import com.netply.botchan.web.rest.messaging.MessageDatabase;
-import com.netply.botchan.web.rest.messaging.MessageDatabaseImpl;
-import com.netply.botchan.web.rest.messaging.MessageManager;
-import com.netply.botchan.web.rest.messaging.MessageManagerImpl;
 import com.netply.botchan.web.rest.permissions.PermissionDatabase;
 import com.netply.botchan.web.rest.permissions.PermissionDatabaseImpl;
 import com.netply.botchan.web.rest.permissions.PermissionManager;
@@ -45,6 +41,9 @@ public class AppConfig {
     @Value("${mysql_password}")
     private String mysqlPassword;
 
+    @Value("${spring.datasource.url}")
+    private String datasourceURL;
+
 
     @Bean
     public LoginHandler loginHandler(LoginDatabase loginDatabase) {
@@ -59,16 +58,6 @@ public class AppConfig {
     @Bean
     public SessionHandler sessionHandler(LoginDatabase loginDatabase) {
         return new SessionHandler(loginDatabase);
-    }
-
-    @Bean
-    public MessageDatabase messageDatabase() throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
-        return new MessageDatabaseImpl(mysqlIp, mysqlPort, mysqlDb, mysqlUser, mysqlPassword);
-    }
-
-    @Bean
-    public MessageManager messageManager() throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
-        return new MessageManagerImpl(messageDatabase(), userManager());
     }
 
     @Bean

@@ -101,6 +101,20 @@
             <version>0.9.0</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Exclude teh default Tomcat connection pool -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+
+        <!-- Common DBCP2 connection pool -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+
     </dependencies>
 
     <profiles>

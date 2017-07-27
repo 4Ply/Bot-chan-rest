@@ -1,11 +1,12 @@
 package com.netply.botchan.web.rest.persistence;
 
-import com.netply.botchan.web.model.Account;
 import com.netply.botchan.web.model.BasicResultResponse;
 import com.netply.botchan.web.rest.error.InvalidCredentialsException;
 import com.netply.web.security.login.LoginDatabase;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -125,20 +126,5 @@ public class LoginDatabaseImpl extends BaseDatabase implements LoginDatabase {
             e.printStackTrace();
         }
         return false;
-    }
-
-    @Override
-    public Account findByUsername(String username) {
-        try (PreparedStatement preparedStatement = getConnection().prepareStatement("SELECT * FROM `members` WHERE members.username LIKE ? LIMIT 1")) {
-            preparedStatement.setString(1, username);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                return new Account(resultSet.getString("username"), resultSet.getString("password"));
-            }
-        } catch (SQLException e) {
-            LoginDatabaseImpl.LOGGER.severe(e.getMessage());
-            e.printStackTrace();
-        }
-        return null;
     }
 }
