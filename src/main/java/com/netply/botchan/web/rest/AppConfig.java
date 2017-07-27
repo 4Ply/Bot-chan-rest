@@ -2,10 +2,6 @@ package com.netply.botchan.web.rest;
 
 import com.netply.botchan.web.rest.events.EventManager;
 import com.netply.botchan.web.rest.events.EventManagerImpl;
-import com.netply.botchan.web.rest.games.TrackedPlayerDatabase;
-import com.netply.botchan.web.rest.games.TrackedPlayerDatabaseImpl;
-import com.netply.botchan.web.rest.games.TrackedPlayerManager;
-import com.netply.botchan.web.rest.games.TrackedPlayerManagerImpl;
 import com.netply.botchan.web.rest.persistence.LoginDatabaseImpl;
 import com.netply.botchan.web.rest.user.UserDatabase;
 import com.netply.botchan.web.rest.user.UserDatabaseImpl;
@@ -59,16 +55,6 @@ public class AppConfig {
     @Bean
     public EventManager eventManager() {
         return EventManagerImpl.getInstance();
-    }
-
-    @Bean
-    public TrackedPlayerDatabase trackedPlayerDatabase() throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
-        return new TrackedPlayerDatabaseImpl(mysqlIp, mysqlPort, mysqlDb, mysqlUser, mysqlPassword);
-    }
-
-    @Bean
-    public TrackedPlayerManager trackedPlayerManager() throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
-        return new TrackedPlayerManagerImpl(trackedPlayerDatabase());
     }
 
     @Bean
