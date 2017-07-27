@@ -7,7 +7,7 @@ public interface UserDatabase {
 
     int createUser();
 
-    void setUserID(int userID, String clientID, String platform);
+    boolean setUserID(int userID, String clientID, String platform);
 
     User getUser(int userID);
 }

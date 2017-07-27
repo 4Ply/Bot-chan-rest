@@ -19,8 +19,11 @@ public class UserManagerImpl implements UserManager {
         int userID = userDatabase.getUserID(clientID, platform);
         if (userID == -1) {
             int newUserID = userDatabase.createUser();
-            userDatabase.setUserID(newUserID, clientID, platform);
-            return newUserID;
+            if (userDatabase.setUserID(newUserID, clientID, platform)) {
+                return newUserID;
+            }
+
+            throw new RuntimeException("Unable to retrieve userID");
         }
         return userID;
     }

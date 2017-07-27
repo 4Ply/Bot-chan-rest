@@ -3,10 +3,6 @@ package com.netply.botchan.web.rest;
 import com.netply.botchan.web.rest.events.EventManager;
 import com.netply.botchan.web.rest.events.EventManagerImpl;
 import com.netply.botchan.web.rest.persistence.LoginDatabaseImpl;
-import com.netply.botchan.web.rest.user.UserDatabase;
-import com.netply.botchan.web.rest.user.UserDatabaseImpl;
-import com.netply.botchan.web.rest.user.UserManager;
-import com.netply.botchan.web.rest.user.UserManagerImpl;
 import com.netply.web.security.login.LoginDatabase;
 import com.netply.web.security.login.LoginHandler;
 import com.netply.web.security.login.SessionHandler;
@@ -55,15 +51,5 @@ public class AppConfig {
     @Bean
     public EventManager eventManager() {
         return EventManagerImpl.getInstance();
-    }
-
-    @Bean
-    public UserDatabase userDatabase() throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
-        return new UserDatabaseImpl(mysqlIp, mysqlPort, mysqlDb, mysqlUser, mysqlPassword);
-    }
-
-    @Bean
-    public UserManager userManager() throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
-        return new UserManagerImpl(userDatabase());
     }
 }
