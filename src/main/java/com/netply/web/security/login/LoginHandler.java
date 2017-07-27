@@ -3,6 +3,7 @@ package com.netply.web.security.login;
 import com.netply.botchan.web.model.BasicResultResponse;
 import com.netply.botchan.web.rest.error.InvalidCredentialsException;
 
+@Deprecated
 public class LoginHandler {
     private LoginDatabase database;
 

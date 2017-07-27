@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+@Deprecated
 public class LoginDatabaseImpl extends BaseDatabase implements LoginDatabase {
     private final static Logger LOGGER = Logger.getLogger(LoginDatabaseImpl.class.getName());
 
