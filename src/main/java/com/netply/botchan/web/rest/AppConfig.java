@@ -6,10 +6,6 @@ import com.netply.botchan.web.rest.games.TrackedPlayerDatabase;
 import com.netply.botchan.web.rest.games.TrackedPlayerDatabaseImpl;
 import com.netply.botchan.web.rest.games.TrackedPlayerManager;
 import com.netply.botchan.web.rest.games.TrackedPlayerManagerImpl;
-import com.netply.botchan.web.rest.permissions.PermissionDatabase;
-import com.netply.botchan.web.rest.permissions.PermissionDatabaseImpl;
-import com.netply.botchan.web.rest.permissions.PermissionManager;
-import com.netply.botchan.web.rest.permissions.PermissionManagerImpl;
 import com.netply.botchan.web.rest.persistence.LoginDatabaseImpl;
 import com.netply.botchan.web.rest.user.UserDatabase;
 import com.netply.botchan.web.rest.user.UserDatabaseImpl;
@@ -73,16 +69,6 @@ public class AppConfig {
     @Bean
     public TrackedPlayerManager trackedPlayerManager() throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
         return new TrackedPlayerManagerImpl(trackedPlayerDatabase());
-    }
-
-    @Bean
-    public PermissionDatabase permissionDatabase() throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
-        return new PermissionDatabaseImpl(mysqlIp, mysqlPort, mysqlDb, mysqlUser, mysqlPassword);
-    }
-
-    @Bean
-    public PermissionManager permissionManager() throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
-        return new PermissionManagerImpl(permissionDatabase(), userManager());
     }
 
     @Bean
