@@ -47,7 +47,7 @@ public class MessageManagerImpl implements MessageManager {
         if (user != null) {
             messageDatabase.addReply(user.getClientID(), serverMessage.getMessage(), user.getPlatform());
         } else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Invalid User ID");
         }
     }
 

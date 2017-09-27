@@ -24,9 +24,9 @@ public class ReplyControllerInvalidSessionKeyTest extends BaseControllerTest {
 
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         messageManager = mock(MessageManager.class);
-        mvc = MockMvcBuilders.standaloneSetup(new MessageController(sessionHandler, messageManager)).build();
+        mvc = MockMvcBuilders.standaloneSetup(new MessageController(messageManager)).build();
     }
 
     @Test

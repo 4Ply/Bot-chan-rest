@@ -17,8 +17,8 @@ public class GreetingControllerTest extends BaseControllerTest {
 
 
     @Before
-    public void setUp() throws Exception {
-        mvc = MockMvcBuilders.standaloneSetup(new GreetingController(sessionHandler)).build();
+    public void setUp() {
+        mvc = MockMvcBuilders.standaloneSetup(new GreetingController()).build();
     }
 
     @Test

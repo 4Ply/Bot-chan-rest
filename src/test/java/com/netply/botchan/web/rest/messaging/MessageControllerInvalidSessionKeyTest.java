@@ -19,9 +19,9 @@ public class MessageControllerInvalidSessionKeyTest extends BaseControllerTest {
 
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         messageManager = mock(MessageManager.class);
-        mvc = MockMvcBuilders.standaloneSetup(new MessageController(sessionHandler, messageManager)).build();
+        mvc = MockMvcBuilders.standaloneSetup(new MessageController(messageManager)).build();
     }
 
     @Test
@@ -60,7 +60,7 @@ public class MessageControllerInvalidSessionKeyTest extends BaseControllerTest {
         testUnauthorisedPostMessagesRequest(VALID_SESSION_KEY, INVALID_CLIENT_ID);
     }
 
-    private void testUnauthorisedPostMessagesRequest(String sessionKey, int clientId) throws Exception {
+    private void testUnauthorisedPostMessagesRequest(String sessionKey, int clientId) {
 //        ArrayList<String> matchers = new ArrayList<>();
 //        matchers.add("111");
 //        MatcherList matcherList = new MatcherList(clientId, matchers);
@@ -85,7 +85,7 @@ public class MessageControllerInvalidSessionKeyTest extends BaseControllerTest {
         testDeleteMessageUnauthorised(VALID_SESSION_KEY, INVALID_CLIENT_ID);
     }
 
-    private void testDeleteMessageUnauthorised(String sessionKey, int clientId) throws Exception {
+    private void testDeleteMessageUnauthorised(String sessionKey, int clientId) {
 //        Message message = new Message();
 //        String messageID = "message-id";
 //        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/message")

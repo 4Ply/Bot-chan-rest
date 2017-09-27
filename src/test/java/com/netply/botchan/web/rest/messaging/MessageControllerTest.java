@@ -20,9 +20,9 @@ public class MessageControllerTest extends BaseControllerTest {
 
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         messageManager = mock(MessageManager.class);
-        mvc = MockMvcBuilders.standaloneSetup(new MessageController(sessionHandler, messageManager)).build();
+        mvc = MockMvcBuilders.standaloneSetup(new MessageController(messageManager)).build();
     }
 
     @Test
@@ -41,7 +41,7 @@ public class MessageControllerTest extends BaseControllerTest {
     }
 
     @Test
-    public void test_Post_Messages_Returns_List_Of_Messages_For_A_Client_ID() throws Exception {
+    public void test_Post_Messages_Returns_List_Of_Messages_For_A_Client_ID() {
 //        ArrayList<String> matchers = new ArrayList<>();
 //        matchers.add("111");
 //        MatcherList matcherList = new MatcherList("platform", matchers);
@@ -65,7 +65,7 @@ public class MessageControllerTest extends BaseControllerTest {
     }
 
     @Test
-    public void test_Delete_Message_Marks_Message_As_Processed_In_MessageManager() throws Exception {
+    public void test_Delete_Message_Marks_Message_As_Processed_In_MessageManager() {
 //        Message message = new Message();
 //        String messageID = "message-id";
 //        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/message")
