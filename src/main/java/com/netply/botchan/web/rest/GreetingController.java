@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
@@ -15,8 +16,12 @@ public class GreetingController {
 
 
     @RequestMapping(value = "/greeting", produces = "application/json")
-    public @ResponseBody
-    BasicMessageObject greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
+    public @ResponseBody BasicMessageObject greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
         return new BasicMessageObject(counter.incrementAndGet(), String.format(template, name));
+    }
+
+    @RequestMapping(value = "/status", produces = "application/json")
+    public @ResponseBody BasicMessageObject status() {
+        return new BasicMessageObject(0, new Date().toString());
     }
 }
