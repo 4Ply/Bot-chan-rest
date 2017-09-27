@@ -19,6 +19,8 @@ public interface MessageManager {
 
     void addDirectMessage(ServerMessage serverMessage);
 
+    void addDirectMessage(int userID, String message);
+
     void markReplyAsProcessed(int replyID, String platform);
 
     List<ToUserMessage> getUnProcessedReplies(ArrayList<String> targetMatchers, String platform);

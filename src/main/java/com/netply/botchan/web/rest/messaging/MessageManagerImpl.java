@@ -43,9 +43,14 @@ public class MessageManagerImpl implements MessageManager {
 
     @Override
     public void addDirectMessage(ServerMessage serverMessage) {
-        User user = userManager.getDefaultUser(serverMessage.getUserID());
+        addDirectMessage(serverMessage.getUserID(), serverMessage.getMessage());
+    }
+
+    @Override
+    public void addDirectMessage(int userID, String message) {
+        User user = userManager.getDefaultUser(userID);
         if (user != null) {
-            messageDatabase.addReply(user.getClientID(), serverMessage.getMessage(), user.getPlatform());
+            messageDatabase.addReply(user.getClientID(), message, user.getPlatform());
         } else {
             throw new IllegalArgumentException("Invalid User ID");
         }
