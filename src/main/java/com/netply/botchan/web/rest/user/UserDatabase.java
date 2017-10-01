@@ -10,4 +10,16 @@ public interface UserDatabase {
     boolean setUserID(int userID, String clientID, String platform);
 
     User getUser(int userID);
+
+    String createPlatformOTP(String clientID, String platform);
+
+    String createUserOTP(int userID, String platformOTP);
+
+    String getPlatformOTP(String clientID, String platform);
+
+    int getUserIDForOTP(String platformOTP, String userOTP);
+
+    void invalidatePlatformOTP(String platformOTP);
+
+    void invalidateAuthorisedOTP(String userOTP);
 }

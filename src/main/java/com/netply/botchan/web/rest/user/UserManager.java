@@ -6,4 +6,10 @@ public interface UserManager {
     int getUserID(String clientID, String platform);
 
     User getDefaultUser(int userID);
+
+    String createPlatformOTP(String clientID, String platform);
+
+    String createUserOTP(String clientID, String platform, String platformOTP);
+
+    boolean linkPlatform(String clientID, String platform, String userOTP);
 }

@@ -68,7 +68,6 @@ public class MessageDatabaseImpl implements MessageDatabase {
     public List<Message> getUnProcessedMessagesForPlatform(ArrayList<String> messageMatchers, String platform) {
         return jdbcTemplate.query(connection -> {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT id, sender, message, messages.platform, direct FROM messages " +
-                    "LEFT JOIN message_processed ON messages.id = message_processed.message_id " +
                     "WHERE messages.id NOT IN (SELECT message_id FROM message_processed WHERE message_processed.platform = ?)");
             int i = 0;
             preparedStatement.setString(++i, platform);
@@ -105,9 +104,10 @@ public class MessageDatabaseImpl implements MessageDatabase {
     public List<ToUserMessage> getUnProcessedReplies(ArrayList<String> targetMatchers, String platform) {
         return jdbcTemplate.query(connection -> {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT id, target, message FROM replies " +
-                    "LEFT JOIN replies_processed ON replies.id = replies_processed.reply_id " +
-                    "WHERE replies.id NOT IN (SELECT reply_id FROM replies_processed WHERE replies_processed.platform = ?)");
+                    "WHERE replies.id NOT IN (SELECT reply_id FROM replies_processed WHERE replies_processed.platform = ?) " +
+                    "AND replies.platform = ?");
             int i = 0;
+            preparedStatement.setString(++i, platform);
             preparedStatement.setString(++i, platform);
 
             return preparedStatement;
