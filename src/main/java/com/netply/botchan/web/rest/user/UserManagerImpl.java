@@ -34,6 +34,18 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
+    public String getFriendlyName(String clientID, String platform) {
+        int userID = getUserID(clientID, platform);
+        return userDatabase.getName(userID);
+    }
+
+    @Override
+    public void setFriendlyName(String clientID, String platform, String name) {
+        int userID = getUserID(clientID, platform);
+        userDatabase.setName(userID, name);
+    }
+
+    @Override
     public String createPlatformOTP(String clientID, String platform) {
         return userDatabase.createPlatformOTP(clientID, platform);
     }

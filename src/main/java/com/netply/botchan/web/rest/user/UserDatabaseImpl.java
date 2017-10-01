@@ -70,6 +70,29 @@ public class UserDatabaseImpl implements UserDatabase {
     }
 
     @Override
+    public String getName(int userID) {
+        return jdbcTemplate.query(connection -> {
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT `name` FROM users WHERE id = ? LIMIT 1");
+            int i = 0;
+            preparedStatement.setInt(++i, userID);
+
+            return preparedStatement;
+        }, (resultSet, i) -> resultSet.getString("name")).stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public void setName(int userID, String name) {
+        jdbcTemplate.update(connection -> {
+            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE users SET `name` = ? WHERE id = ?");
+            int i = 0;
+            preparedStatement.setString(++i, name);
+            preparedStatement.setInt(++i, userID);
+
+            return preparedStatement;
+        });
+    }
+
+    @Override
     public String createPlatformOTP(String clientID, String platform) {
         String hash = DigestUtils.md5DigestAsHex(String.valueOf(clientID + "###" + platform + "###" + new Date().toString()).getBytes()).substring(0, 7).toUpperCase();
         jdbcTemplate.update(connection -> {

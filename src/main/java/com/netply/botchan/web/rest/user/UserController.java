@@ -31,8 +31,21 @@ public class UserController {
 
     @RequestMapping(value = "/linkPlatform", method = RequestMethod.GET)
     public boolean linkPlatform(@RequestParam(value = "sender") String sender,
-                               @RequestParam(value = "platform") String platform,
-                               @RequestParam(value = "userOTP") String userOTP) {
+                                @RequestParam(value = "platform") String platform,
+                                @RequestParam(value = "userOTP") String userOTP) {
         return userManager.linkPlatform(sender, platform, userOTP);
+    }
+
+    @RequestMapping(value = "/name", method = RequestMethod.GET)
+    public String getFriendlyName(@RequestParam(value = "sender") String sender,
+                                  @RequestParam(value = "platform") String platform) {
+        return userManager.getFriendlyName(sender, platform);
+    }
+
+    @RequestMapping(value = "/name", method = RequestMethod.PATCH)
+    public void updateFriendlyName(@RequestParam(value = "sender") String sender,
+                                  @RequestParam(value = "platform") String platform,
+                                  @RequestParam(value = "name") String name) {
+        userManager.setFriendlyName(sender, platform, name);
     }
 }

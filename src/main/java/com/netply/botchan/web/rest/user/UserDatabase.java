@@ -11,6 +11,10 @@ public interface UserDatabase {
 
     User getUser(int userID);
 
+    String getName(int userID);
+
+    void setName(int userID, String name);
+
     String createPlatformOTP(String clientID, String platform);
 
     String createUserOTP(int userID, String platformOTP);

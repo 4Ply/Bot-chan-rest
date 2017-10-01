@@ -7,6 +7,10 @@ public interface UserManager {
 
     User getDefaultUser(int userID);
 
+    String getFriendlyName(String clientID, String platform);
+
+    void setFriendlyName(String clientID, String platform, String name);
+
     String createPlatformOTP(String clientID, String platform);
 
     String createUserOTP(String clientID, String platform, String platformOTP);
