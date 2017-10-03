@@ -1,23 +1,28 @@
 package com.netply.botchan.web.rest.messaging;
 
 import com.netply.botchan.web.model.*;
+import com.netply.botchan.web.rest.node.NodeManager;
+import com.netply.botchan.web.rest.user.PlatformUser;
 import com.netply.botchan.web.rest.user.UserManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class MessageManagerImpl implements MessageManager {
     private MessageDatabase messageDatabase;
     private UserManager userManager;
+    private NodeManager nodeManager;
 
 
     @Autowired
-    public MessageManagerImpl(MessageDatabase messageDatabase, UserManager userManager) {
+    public MessageManagerImpl(MessageDatabase messageDatabase, UserManager userManager, NodeManager nodeManager) {
         this.messageDatabase = messageDatabase;
         this.userManager = userManager;
+        this.nodeManager = nodeManager;
     }
 
     @Override
@@ -31,8 +36,19 @@ public class MessageManagerImpl implements MessageManager {
     }
 
     @Override
-    public List<Message> getUnProcessedMessagesForPlatform(ArrayList<String> messageMatchers, String platform) {
-        return messageDatabase.getUnProcessedMessagesForPlatform(messageMatchers, platform);
+    public List<Message> getUnProcessedMessagesForPlatform(ArrayList<String> messageMatchers, String node) {
+        nodeManager.ensureNodeExists(node);
+        List<Message> messageList = messageDatabase.getUnProcessedMessagesForPlatform(messageMatchers, node);
+
+        List<PlatformUser> platformUsers = messageList.stream()
+                .map(message -> new PlatformUser(message.getSender(), message.getPlatform()))
+                .distinct()
+                .filter(platformUser -> nodeManager.isNodeAllowed(platformUser.getClientID(), platformUser.getPlatform(), node))
+                .collect(Collectors.toList());
+
+        return messageList.stream()
+                .filter(message -> platformUsers.contains(new PlatformUser(message.getSender(), message.getPlatform())))
+                .collect(Collectors.toList());
     }
 
     @Override

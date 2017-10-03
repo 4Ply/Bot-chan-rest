@@ -36,7 +36,7 @@ public class UserDatabaseImpl implements UserDatabase {
 
     @Override
     public int createUser() {
-        int update = jdbcTemplate.update(connection -> connection.prepareStatement("INSERT INTO users (id, name) VALUES (NULL, NULL)"));
+        int update = jdbcTemplate.update(connection -> connection.prepareStatement("INSERT INTO users (id) VALUES (NULL)"));
 
         if (update >= 1) {
             return jdbcTemplate.query(connection -> connection.prepareStatement("SELECT LAST_INSERT_ID()"), (resultSet, i) -> resultSet.getInt("LAST_INSERT_ID()")).stream().findFirst().orElse(-1);
