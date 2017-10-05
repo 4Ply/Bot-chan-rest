@@ -25,10 +25,10 @@ public class NodeController {
     }
 
     @RequestMapping(value = "/nodeStatus", method = RequestMethod.PATCH)
-    public void listNodes(@RequestParam(value = "sender") String sender,
-                          @RequestParam(value = "platform") String platform,
-                          @RequestParam(value = "node") String node,
-                          @RequestParam(value = "enabled") boolean isEnabled) throws NodeNotFoundException {
+    public void updateNode(@RequestParam(value = "sender") String sender,
+                           @RequestParam(value = "platform") String platform,
+                           @RequestParam(value = "node") String node,
+                           @RequestParam(value = "enabled") boolean isEnabled) throws NodeNotFoundException {
         nodeManager.updateNodeStatus(sender, platform, node, isEnabled);
     }
 }
