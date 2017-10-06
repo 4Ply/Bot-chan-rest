@@ -15,6 +15,8 @@ public interface MessageManager {
 
     List<Message> getUnProcessedMessagesForPlatform(ArrayList<String> messageMatchers, String platform);
 
+    List<Message> getUnProcessedMessagesForPlatformAndUser(ArrayList<String> messageMatchers, String node, String clientID, String platform);
+
     void addReply(Reply reply);
 
     void addDirectMessage(ServerMessage serverMessage);

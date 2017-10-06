@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class MessageController {
@@ -20,6 +21,14 @@ public class MessageController {
     public @ResponseBody
     List<Message> getMessages(@RequestBody MatcherList matcherList) {
         return messageManager.getUnProcessedMessagesForPlatform(matcherList.getMatchers(), matcherList.getPlatform());
+    }
+
+    @RequestMapping(value = "/messagesForUser", produces = "application/json", method = RequestMethod.POST)
+    public @ResponseBody
+    List<Message> getMessagesForUserUsingPlatform(@RequestBody MatcherList matcherList,
+                                                  @RequestParam(value = "clientID") String clientID,
+                                                  @RequestParam(value = "platform") String platform) {
+        return messageManager.getUnProcessedMessagesForPlatformAndUser(matcherList.getMatchers(), platform, clientID, platform);
     }
 
     @RequestMapping(value = "/message", method = RequestMethod.PUT)
@@ -54,6 +63,30 @@ public class MessageController {
     public @ResponseBody
     List<ToUserMessage> getReplies(@RequestBody MatcherList matcherList) {
         return messageManager.getUnProcessedReplies(matcherList.getMatchers(), matcherList.getPlatform());
+    }
+
+    @RequestMapping(value = "/autoDeleteReplies", produces = "application/json", method = RequestMethod.POST)
+    public @ResponseBody
+    List<ToUserMessage> getRepliesAndMarkThemAsProcessed(@RequestBody MatcherList matcherList) {
+        List<ToUserMessage> unProcessedReplies = messageManager.getUnProcessedReplies(matcherList.getMatchers(), matcherList.getPlatform());
+        for (ToUserMessage unProcessedReply : unProcessedReplies) {
+            messageManager.markReplyAsProcessed(unProcessedReply.getId(), matcherList.getPlatform());
+        }
+        return unProcessedReplies;
+    }
+
+    @RequestMapping(value = "/autoDeleteRepliesForPlatform", produces = "application/json", method = RequestMethod.POST)
+    public @ResponseBody
+    List<ToUserMessage> getRepliesAndMarkThemAsProcessedForPlatform(@RequestBody MatcherList matcherList,
+                                                                    @RequestParam(value = "clientID") String clientID,
+                                                                    @RequestParam(value = "platform") String platform) {
+        List<ToUserMessage> unProcessedReplies = messageManager.getUnProcessedReplies(matcherList.getMatchers(), platform)
+                .stream().filter(toUserMessage -> toUserMessage.getTarget().equals(clientID)).collect(Collectors.toList());
+
+        for (ToUserMessage unProcessedReply : unProcessedReplies) {
+            messageManager.markReplyAsProcessed(unProcessedReply.getId(), platform);
+        }
+        return unProcessedReplies;
     }
 
     @RequestMapping(value = "/reply", method = RequestMethod.DELETE)

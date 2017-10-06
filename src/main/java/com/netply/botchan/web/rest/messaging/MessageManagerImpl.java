@@ -40,14 +40,35 @@ public class MessageManagerImpl implements MessageManager {
         nodeManager.ensureNodeExists(node);
         List<Message> messageList = messageDatabase.getUnProcessedMessagesForPlatform(messageMatchers, node);
 
-        List<PlatformUser> platformUsers = messageList.stream()
+        List<PlatformUser> platformUsers = getPlatformUsersWhereNodeIsAuthorised(node, messageList);
+
+        return messageList.stream()
+                .filter(message -> platformUsers.contains(new PlatformUser(message.getSender(), message.getPlatform())))
+                .collect(Collectors.toList());
+    }
+
+    private List<PlatformUser> getPlatformUsersWhereNodeIsAuthorised(String node, List<Message> messageList) {
+        return messageList.stream()
                 .map(message -> new PlatformUser(message.getSender(), message.getPlatform()))
                 .distinct()
                 .filter(platformUser -> nodeManager.isNodeAllowed(platformUser.getClientID(), platformUser.getPlatform(), node))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Message> getUnProcessedMessagesForPlatformAndUser(ArrayList<String> messageMatchers, String node, String clientID, String platform) {
+        int userID = userManager.getUserID(clientID, platform);
+        nodeManager.ensureNodeExists(node);
+        List<Message> messageList = messageDatabase.getUnProcessedMessagesForPlatform(messageMatchers, node);
+
+        List<PlatformUser> platformUsers = getPlatformUsersWhereNodeIsAuthorised(node, messageList);
+
+        List<PlatformUser> targetPlatformUsers = platformUsers.stream()
+                .filter(platformUser -> userManager.getUserID(platformUser.getClientID(), platformUser.getPlatform()) == userID)
+                .collect(Collectors.toList());
 
         return messageList.stream()
-                .filter(message -> platformUsers.contains(new PlatformUser(message.getSender(), message.getPlatform())))
+                .filter(message -> targetPlatformUsers.contains(new PlatformUser(message.getSender(), message.getPlatform())))
                 .collect(Collectors.toList());
     }
 
