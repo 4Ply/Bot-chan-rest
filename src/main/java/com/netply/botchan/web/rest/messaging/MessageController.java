@@ -23,6 +23,16 @@ public class MessageController {
         return messageManager.getUnProcessedMessagesForPlatform(matcherList.getMatchers(), matcherList.getPlatform());
     }
 
+    @RequestMapping(value = "/uniqueMessages", produces = "application/json", method = RequestMethod.POST)
+    public @ResponseBody
+    List<Message> getMessagesAndMarkThemAsProcessed(@RequestBody MatcherList matcherList) {
+        List<Message> messageList = messageManager.getUnProcessedMessagesForPlatform(matcherList.getMatchers(), matcherList.getPlatform());
+        for (Message message : messageList) {
+            messageManager.markMessageAsProcessed(message.getId(), matcherList.getPlatform());
+        }
+        return messageList;
+    }
+
     @RequestMapping(value = "/messagesForUser", produces = "application/json", method = RequestMethod.POST)
     public @ResponseBody
     List<Message> getMessagesForUserUsingPlatform(@RequestBody MatcherList matcherList,
@@ -50,6 +60,12 @@ public class MessageController {
     @RequestMapping(value = "/directMessage", method = RequestMethod.PUT)
     public void addDirectMessage(@RequestBody ServerMessage serverMessage) {
         messageManager.addDirectMessage(serverMessage);
+    }
+
+    @RequestMapping(value = "/directReply/{messageID}", method = RequestMethod.PUT)
+    public void addDirectMessageForMessageID(@PathVariable("messageID") Integer messageID,
+                                             @RequestParam("message") String message) {
+        messageManager.addDirectMessageForMessageID(messageID, message);
     }
 
     @RequestMapping(value = "/directMessage/{id}", method = RequestMethod.GET)

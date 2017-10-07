@@ -65,7 +65,7 @@ public class MessageDatabaseImpl implements MessageDatabase {
     }
 
     @Override
-    public List<Message> getUnProcessedMessagesForPlatform(ArrayList<String> messageMatchers, String platform) {
+    public List<Message> getUnProcessedMessagesForPlatform(String platform) {
         return jdbcTemplate.query(connection -> {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT id, sender, message, messages.platform, direct FROM messages " +
                     "WHERE messages.id NOT IN (SELECT message_id FROM message_processed WHERE message_processed.platform = ?)");

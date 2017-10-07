@@ -23,6 +23,8 @@ public interface MessageManager {
 
     void addDirectMessage(int userID, String message);
 
+    void addDirectMessageForMessageID(Integer messageID, String message);
+
     void markReplyAsProcessed(int replyID, String platform);
 
     List<ToUserMessage> getUnProcessedReplies(ArrayList<String> targetMatchers, String platform);

@@ -38,13 +38,26 @@ public class MessageManagerImpl implements MessageManager {
     @Override
     public List<Message> getUnProcessedMessagesForPlatform(ArrayList<String> messageMatchers, String node) {
         nodeManager.ensureNodeExists(node);
-        List<Message> messageList = messageDatabase.getUnProcessedMessagesForPlatform(messageMatchers, node);
+        List<Message> messageList = messageDatabase.getUnProcessedMessagesForPlatform(node);
 
         List<PlatformUser> platformUsers = getPlatformUsersWhereNodeIsAuthorised(node, messageList);
 
-        return messageList.stream()
-                .filter(message -> platformUsers.contains(new PlatformUser(message.getSender(), message.getPlatform())))
+        return messagesMatchingMatcherForPlatformUser(messageList, messageMatchers, platformUsers);
+    }
+
+    @Override
+    public List<Message> getUnProcessedMessagesForPlatformAndUser(ArrayList<String> messageMatchers, String node, String clientID, String platform) {
+        int userID = userManager.getUserID(clientID, platform);
+        nodeManager.ensureNodeExists(node);
+        List<Message> messageList = messageDatabase.getUnProcessedMessagesForPlatform(node);
+
+        List<PlatformUser> platformUsers = getPlatformUsersWhereNodeIsAuthorised(node, messageList);
+
+        List<PlatformUser> targetPlatformUsers = platformUsers.stream()
+                .filter(platformUser -> userManager.getUserID(platformUser.getClientID(), platformUser.getPlatform()) == userID)
                 .collect(Collectors.toList());
+
+        return messagesMatchingMatcherForPlatformUser(messageList, messageMatchers, targetPlatformUsers);
     }
 
     private List<PlatformUser> getPlatformUsersWhereNodeIsAuthorised(String node, List<Message> messageList) {
@@ -55,20 +68,10 @@ public class MessageManagerImpl implements MessageManager {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<Message> getUnProcessedMessagesForPlatformAndUser(ArrayList<String> messageMatchers, String node, String clientID, String platform) {
-        int userID = userManager.getUserID(clientID, platform);
-        nodeManager.ensureNodeExists(node);
-        List<Message> messageList = messageDatabase.getUnProcessedMessagesForPlatform(messageMatchers, node);
-
-        List<PlatformUser> platformUsers = getPlatformUsersWhereNodeIsAuthorised(node, messageList);
-
-        List<PlatformUser> targetPlatformUsers = platformUsers.stream()
-                .filter(platformUser -> userManager.getUserID(platformUser.getClientID(), platformUser.getPlatform()) == userID)
-                .collect(Collectors.toList());
-
+    private List<Message> messagesMatchingMatcherForPlatformUser(List<Message> messageList, ArrayList<String> messageMatchers, List<PlatformUser> platformUsers) {
         return messageList.stream()
-                .filter(message -> targetPlatformUsers.contains(new PlatformUser(message.getSender(), message.getPlatform())))
+                .filter(message -> messageMatchers.stream().anyMatch(s -> message.getMessage().matches(s)))
+                .filter(message -> platformUsers.contains(new PlatformUser(message.getSender(), message.getPlatform())))
                 .collect(Collectors.toList());
     }
 
@@ -81,6 +84,14 @@ public class MessageManagerImpl implements MessageManager {
     @Override
     public void addDirectMessage(ServerMessage serverMessage) {
         addDirectMessage(serverMessage.getUserID(), serverMessage.getMessage());
+    }
+
+    @Override
+    public void addDirectMessageForMessageID(Integer messageID, String message) {
+        Message originalMessage = messageDatabase.getMessage(messageID);
+        int userID = userManager.getUserID(originalMessage.getSender(), originalMessage.getPlatform());
+
+        addDirectMessage(userID, message);
     }
 
     @Override
