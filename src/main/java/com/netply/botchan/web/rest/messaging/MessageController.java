@@ -36,8 +36,8 @@ public class MessageController {
     @RequestMapping(value = "/messagesForUser", produces = "application/json", method = RequestMethod.POST)
     public @ResponseBody
     List<FromUserMessage> getMessagesForUserUsingPlatform(@RequestBody MatcherList matcherList,
-                                                  @RequestParam(value = "clientID") String clientID,
-                                                  @RequestParam(value = "platform") String platform) {
+                                                          @RequestParam(value = "clientID") String clientID,
+                                                          @RequestParam(value = "platform") String platform) {
         return messageManager.getUnProcessedMessagesForPlatformAndUser(matcherList.getMatchers(), platform, clientID, platform);
     }
 
@@ -68,7 +68,7 @@ public class MessageController {
         messageManager.addDirectMessageForMessageID(messageID, message);
     }
 
-    @RequestMapping(value = "/directMessage/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/directMessage/{id}", method = {RequestMethod.GET, RequestMethod.PUT})
     public String addDirectMessageToUser(@PathVariable(value = "id") Integer id, @RequestParam(value = "message") String message) {
         messageManager.addDirectMessage(id, message);
 
