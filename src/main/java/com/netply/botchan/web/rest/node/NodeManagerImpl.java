@@ -27,9 +27,8 @@ public class NodeManagerImpl implements NodeManager {
     }
 
     @Override
-    public boolean isNodeAllowed(String clientID, String platform, String node) {
-        int userID = userManager.getUserID(clientID, platform);
-        return nodeDatabase.isNodeAllowed(userID, node);
+    public boolean isNodeAllowed(int platformID, String node) {
+        return nodeDatabase.isNodeAllowed(userManager.getUserID(platformID), node);
     }
 
     @Override

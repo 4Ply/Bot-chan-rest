@@ -1,9 +1,6 @@
 package com.netply.botchan.web.rest.messaging;
 
-import com.netply.botchan.web.model.Message;
-import com.netply.botchan.web.model.Reply;
-import com.netply.botchan.web.model.ServerMessage;
-import com.netply.botchan.web.model.ToUserMessage;
+import com.netply.botchan.web.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +10,9 @@ public interface MessageManager {
 
     void markMessageAsProcessed(int messageID, String platform);
 
-    List<Message> getUnProcessedMessagesForPlatform(ArrayList<String> messageMatchers, String platform);
+    List<FromUserMessage> getUnProcessedMessagesForPlatform(ArrayList<String> messageMatchers, String platform);
 
-    List<Message> getUnProcessedMessagesForPlatformAndUser(ArrayList<String> messageMatchers, String node, String clientID, String platform);
+    List<FromUserMessage> getUnProcessedMessagesForPlatformAndUser(ArrayList<String> messageMatchers, String node, String clientID, String platform);
 
     void addReply(Reply reply);
 

@@ -1,8 +1,9 @@
 package com.netply.botchan.web.rest.user;
 
-import com.netply.botchan.web.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class UserManagerImpl implements UserManager {
@@ -29,8 +30,27 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
-    public User getDefaultUser(int userID) {
-        return userDatabase.getUser(userID);
+    public int getUserID(int platformID) {
+        return userDatabase.getUserID(platformID);
+    }
+
+    @Override
+    public int getPlatformID(String clientID, String platform) {
+        int platformID = userDatabase.getPlatformID(clientID, platform);
+        if (platformID == -1) {
+            int newUserID = userDatabase.createUser();
+            if (userDatabase.setUserID(newUserID, clientID, platform)) {
+                return userDatabase.getPlatformID(clientID, platform);
+            }
+
+            throw new RuntimeException("Unable to retrieve platformID");
+        }
+        return platformID;
+    }
+
+    @Override
+    public List<Integer> getDefaultPlatformIDs(int userID) {
+        return userDatabase.getDefaultPlatformIDs(userID);
     }
 
     @Override

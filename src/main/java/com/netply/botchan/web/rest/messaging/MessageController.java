@@ -19,15 +19,15 @@ public class MessageController {
 
     @RequestMapping(value = "/messages", produces = "application/json", method = RequestMethod.POST)
     public @ResponseBody
-    List<Message> getMessages(@RequestBody MatcherList matcherList) {
+    List<FromUserMessage> getMessages(@RequestBody MatcherList matcherList) {
         return messageManager.getUnProcessedMessagesForPlatform(matcherList.getMatchers(), matcherList.getPlatform());
     }
 
     @RequestMapping(value = "/uniqueMessages", produces = "application/json", method = RequestMethod.POST)
     public @ResponseBody
-    List<Message> getMessagesAndMarkThemAsProcessed(@RequestBody MatcherList matcherList) {
-        List<Message> messageList = messageManager.getUnProcessedMessagesForPlatform(matcherList.getMatchers(), matcherList.getPlatform());
-        for (Message message : messageList) {
+    List<FromUserMessage> getMessagesAndMarkThemAsProcessed(@RequestBody MatcherList matcherList) {
+        List<FromUserMessage> messageList = messageManager.getUnProcessedMessagesForPlatform(matcherList.getMatchers(), matcherList.getPlatform());
+        for (FromUserMessage message : messageList) {
             messageManager.markMessageAsProcessed(message.getId(), matcherList.getPlatform());
         }
         return messageList;
@@ -35,7 +35,7 @@ public class MessageController {
 
     @RequestMapping(value = "/messagesForUser", produces = "application/json", method = RequestMethod.POST)
     public @ResponseBody
-    List<Message> getMessagesForUserUsingPlatform(@RequestBody MatcherList matcherList,
+    List<FromUserMessage> getMessagesForUserUsingPlatform(@RequestBody MatcherList matcherList,
                                                   @RequestParam(value = "clientID") String clientID,
                                                   @RequestParam(value = "platform") String platform) {
         return messageManager.getUnProcessedMessagesForPlatformAndUser(matcherList.getMatchers(), platform, clientID, platform);

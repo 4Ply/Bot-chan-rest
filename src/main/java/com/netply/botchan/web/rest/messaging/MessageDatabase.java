@@ -1,21 +1,21 @@
 package com.netply.botchan.web.rest.messaging;
 
-import com.netply.botchan.web.model.Message;
+import com.netply.botchan.web.model.FromUserMessage;
 import com.netply.botchan.web.model.ToUserMessage;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public interface MessageDatabase {
-    Message getMessage(int messageID);
+    FromUserMessage getMessage(int messageID);
 
-    void addMessage(String sender, String message, String platform, boolean direct);
+    void addMessage(int platformID, String message, boolean direct);
 
     void markMessageAsProcessed(int messageID, String platform);
 
-    List<Message> getUnProcessedMessagesForPlatform(String platform);
+    List<FromUserMessage> getUnProcessedMessagesForPlatform(String platform);
 
-    void addReply(String target, String message, String platform);
+    void addReply(int platformID, String message);
 
     void markReplyAsProcessed(int replyID, String platform);
 

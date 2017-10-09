@@ -1,6 +1,6 @@
 package com.netply.botchan.web.rest.messaging;
 
-import com.netply.botchan.web.model.Message;
+import com.netply.botchan.web.model.FromUserMessage;
 import com.netply.botchan.web.model.ToUserMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,9 +24,9 @@ public class MessageDatabaseImpl implements MessageDatabase {
     }
 
     @Override
-    public Message getMessage(int messageID) {
-        Optional<Message> messageOptional = jdbcTemplate.query(connection -> {
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT id, sender, message, platform, direct FROM messages WHERE id = ?");
+    public FromUserMessage getMessage(int messageID) {
+        Optional<FromUserMessage> messageOptional = jdbcTemplate.query(connection -> {
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT id, platform_id, message, direct FROM messages WHERE id = ?");
             preparedStatement.setInt(1, messageID);
             return preparedStatement;
         }, MessageDatabaseImpl::createMessage).stream().findFirst();
@@ -34,18 +34,17 @@ public class MessageDatabaseImpl implements MessageDatabase {
         return messageOptional.orElse(null);
     }
 
-    private static Message createMessage(ResultSet resultSet, int i) throws SQLException {
-        return new Message(resultSet.getInt("id"), resultSet.getString("message"), resultSet.getString("sender"), resultSet.getString("platform"), resultSet.getBoolean("direct"));
+    private static FromUserMessage createMessage(ResultSet resultSet, int i) throws SQLException {
+        return new FromUserMessage(resultSet.getInt("id"), resultSet.getString("message"), resultSet.getInt("platform_id"), resultSet.getBoolean("direct"));
     }
 
     @Override
-    public void addMessage(String sender, String message, String platform, boolean direct) {
+    public void addMessage(int platformID, String message, boolean direct) {
         jdbcTemplate.update(connection -> {
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO messages (id, sender, message, platform, direct) VALUES (NULL, ?, ?, ?, ?)");
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO messages (id, platform_id, message, direct) VALUES (NULL, ?, ?, ?)");
             int i = 0;
-            preparedStatement.setString(++i, sender);
+            preparedStatement.setInt(++i, platformID);
             preparedStatement.setString(++i, message);
-            preparedStatement.setString(++i, platform);
             preparedStatement.setBoolean(++i, direct);
 
             return preparedStatement;
@@ -65,9 +64,9 @@ public class MessageDatabaseImpl implements MessageDatabase {
     }
 
     @Override
-    public List<Message> getUnProcessedMessagesForPlatform(String platform) {
+    public List<FromUserMessage> getUnProcessedMessagesForPlatform(String platform) {
         return jdbcTemplate.query(connection -> {
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT id, sender, message, messages.platform, direct FROM messages " +
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT id, platform_id, message, direct FROM messages " +
                     "WHERE messages.id NOT IN (SELECT message_id FROM message_processed WHERE message_processed.platform = ?)");
             int i = 0;
             preparedStatement.setString(++i, platform);
@@ -77,13 +76,12 @@ public class MessageDatabaseImpl implements MessageDatabase {
     }
 
     @Override
-    public void addReply(String target, String message, String platform) {
+    public void addReply(int platformID, String message) {
         jdbcTemplate.update(connection -> {
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO replies (id, target, message, platform) VALUES (NULL, ?, ?, ?)");
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO replies (id, platform_id, message) VALUES (NULL, ?, ?)");
             int i = 0;
-            preparedStatement.setString(++i, target);
+            preparedStatement.setInt(++i, platformID);
             preparedStatement.setString(++i, message);
-            preparedStatement.setString(++i, platform);
 
             return preparedStatement;
         });
@@ -103,14 +101,15 @@ public class MessageDatabaseImpl implements MessageDatabase {
     @Override
     public List<ToUserMessage> getUnProcessedReplies(ArrayList<String> targetMatchers, String platform) {
         return jdbcTemplate.query(connection -> {
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT id, target, message FROM replies " +
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT replies.id, platform_users.client_id, message FROM replies " +
+                    "INNER JOIN platform_users ON replies.platform_id = platform_users.id " +
                     "WHERE replies.id NOT IN (SELECT reply_id FROM replies_processed WHERE replies_processed.platform = ?) " +
-                    "AND replies.platform = ?");
+                    "AND platform_users.platform = ?");
             int i = 0;
             preparedStatement.setString(++i, platform);
             preparedStatement.setString(++i, platform);
 
             return preparedStatement;
-        }, (resultSet, i) -> new ToUserMessage(resultSet.getInt("id"), resultSet.getString("target"), resultSet.getString("message")));
+        }, (resultSet, i) -> new ToUserMessage(resultSet.getInt("id"), resultSet.getString("client_id"), resultSet.getString("message")));
     }
 }
