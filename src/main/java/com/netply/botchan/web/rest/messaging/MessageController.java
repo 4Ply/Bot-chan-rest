@@ -47,8 +47,8 @@ public class MessageController {
     }
 
     @RequestMapping(value = "/message", method = RequestMethod.DELETE)
-    public void deleteMessage(@RequestParam(value = "platform") String platform,
-                              @RequestParam(value = "id") Integer messageID) {
+    public void deleteMessage(@RequestParam(value = "id") Integer messageID,
+                              @RequestParam(value = "platform") String platform) {
         messageManager.markMessageAsProcessed(messageID, platform);
     }
 

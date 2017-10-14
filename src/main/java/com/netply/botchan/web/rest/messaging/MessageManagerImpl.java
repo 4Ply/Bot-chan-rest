@@ -39,7 +39,7 @@ public class MessageManagerImpl implements MessageManager {
         nodeManager.ensureNodeExists(node);
         List<FromUserMessage> messageList = messageDatabase.getUnProcessedMessagesForPlatform(node);
 
-        List<Integer> platformIDs = getPlatformUsersWhereNodeIsAuthorised(node, messageList);
+        List<Integer> platformIDs = getPlatformUsersWhereNodeIsAuthorised(messageList, node);
 
         return messagesMatchingMatcherForPlatformUser(messageList, messageMatchers, platformIDs);
     }
@@ -50,7 +50,7 @@ public class MessageManagerImpl implements MessageManager {
         nodeManager.ensureNodeExists(node);
         List<FromUserMessage> messageList = messageDatabase.getUnProcessedMessagesForPlatform(node);
 
-        List<Integer> platformIDs = getPlatformUsersWhereNodeIsAuthorised(node, messageList);
+        List<Integer> platformIDs = getPlatformUsersWhereNodeIsAuthorised(messageList, node);
 
         List<Integer> targetPlatformIDs = platformIDs.stream()
                 .filter(platformID -> userManager.getUserID(platformID) == userID)
@@ -59,7 +59,7 @@ public class MessageManagerImpl implements MessageManager {
         return messagesMatchingMatcherForPlatformUser(messageList, messageMatchers, targetPlatformIDs);
     }
 
-    private List<Integer> getPlatformUsersWhereNodeIsAuthorised(String node, List<FromUserMessage> messageList) {
+    private List<Integer> getPlatformUsersWhereNodeIsAuthorised(List<FromUserMessage> messageList, String node) {
         return messageList.stream()
                 .map(FromUserMessage::getPlatformID)
                 .distinct()
