@@ -1,6 +1,5 @@
 package com.netply.botchan.web.rest.permissions;
 
-import com.netply.botchan.web.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,28 +15,28 @@ public class PermissionController {
         this.permissionManager = permissionManager;
     }
 
-    @RequestMapping(value = "/hasPermission", produces = "application/json", method = RequestMethod.POST)
+    @RequestMapping(value = "/hasPermission/{permission}", produces = "application/json", method = RequestMethod.GET)
     public @ResponseBody
-    Boolean hasPermission(@RequestBody User user,
-            @RequestParam(value = "permission") String permission) {
-        return permissionManager.hasPermission(user, permission);
+    Boolean hasPermission(@PathVariable(value = "permission") String permission,
+                          @RequestParam("platformID") Integer platformID) {
+        return permissionManager.hasPermission(platformID, permission);
     }
 
-    @RequestMapping(value = "/permission", consumes = "application/json", produces = "application/json", method = RequestMethod.PUT)
-    public void addPermission(@RequestBody User user,
-            @RequestParam(value = "permission") String permission) {
-        permissionManager.addPermission(user, permission);
+    @RequestMapping(value = "/permission/{permission}", consumes = "application/json", produces = "application/json", method = RequestMethod.PUT)
+    public void addPermission(@PathVariable(value = "permission") String permission,
+                              @RequestParam("platformID") Integer platformID) {
+        permissionManager.addPermission(platformID, permission);
     }
 
-    @RequestMapping(value = "/permission", consumes = "application/json", produces = "application/json", method = RequestMethod.DELETE)
-    public void removePermission(@RequestBody User user,
-            @RequestParam(value = "permission") String permission) {
-        permissionManager.removePermission(user, permission);
+    @RequestMapping(value = "/permission/{permission}", consumes = "application/json", produces = "application/json", method = RequestMethod.DELETE)
+    public void removePermission(@PathVariable(value = "permission") String permission,
+                                 @RequestParam("platformID") Integer platformID) {
+        permissionManager.removePermission(platformID, permission);
     }
 
-    @RequestMapping(value = "/usersForPermission", produces = "application/json", method = RequestMethod.GET)
+    @RequestMapping(value = "/usersForPermission/{permission}", produces = "application/json", method = RequestMethod.GET)
     public @ResponseBody
-    List<Integer> usersForPermission(@RequestParam(value = "permission") String permission) {
+    List<Integer> usersForPermission(@PathVariable(value = "permission") String permission) {
         return permissionManager.getUsersThatHavePermission(permission);
     }
 }

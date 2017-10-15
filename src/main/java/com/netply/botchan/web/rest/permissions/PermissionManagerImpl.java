@@ -1,6 +1,5 @@
 package com.netply.botchan.web.rest.permissions;
 
-import com.netply.botchan.web.model.User;
 import com.netply.botchan.web.rest.user.UserManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,22 +20,22 @@ public class PermissionManagerImpl implements PermissionManager {
     }
 
     @Override
-    public boolean hasPermission(User user, String permission) {
-        int userID = userManager.getUserID(user.getClientID(), user.getPlatform());
+    public boolean hasPermission(int platformID, String permission) {
+        int userID = userManager.getUserID(platformID);
         return userID != -1 && permissionDatabase.hasPermission(userID, permission);
     }
 
     @Override
-    public void addPermission(User user, String permission) {
-        int userID = userManager.getUserID(user.getClientID(), user.getPlatform());
+    public void addPermission(int platformID, String permission) {
+        int userID = userManager.getUserID(platformID);
         if (userID != -1) {
             permissionDatabase.addPermission(userID, permission);
         }
     }
 
     @Override
-    public void removePermission(User user, String permission) {
-        int userID = userManager.getUserID(user.getClientID(), user.getPlatform());
+    public void removePermission(int platformID, String permission) {
+        int userID = userManager.getUserID(platformID);
         if (userID != -1) {
             permissionDatabase.removePermission(userID, permission);
         }
