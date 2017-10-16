@@ -37,7 +37,7 @@ public class MessageController {
     public @ResponseBody
     List<FromUserMessage> getMessagesForUserUsingPlatform(@RequestBody MatcherList matcherList,
                                                           @RequestParam(value = "clientID") String clientID,
-                                                          @RequestParam(value = "platform") String platform) {
+                                                          @RequestHeader(value = "X-Consumer-Username") String platform) {
         return messageManager.getUnProcessedMessagesForPlatformAndUser(matcherList.getMatchers(), platform, clientID, platform);
     }
 
@@ -48,7 +48,7 @@ public class MessageController {
 
     @RequestMapping(value = "/message", method = RequestMethod.DELETE)
     public void deleteMessage(@RequestParam(value = "id") Integer messageID,
-                              @RequestParam(value = "platform") String platform) {
+                              @RequestHeader(value = "X-Consumer-Username") String platform) {
         messageManager.markMessageAsProcessed(messageID, platform);
     }
 
@@ -95,7 +95,7 @@ public class MessageController {
     public @ResponseBody
     List<ToUserMessage> getRepliesAndMarkThemAsProcessedForPlatform(@RequestBody MatcherList matcherList,
                                                                     @RequestParam(value = "clientID") String clientID,
-                                                                    @RequestParam(value = "platform") String platform) {
+                                                                    @RequestHeader(value = "X-Consumer-Username") String platform) {
         List<ToUserMessage> unProcessedReplies = messageManager.getUnProcessedReplies(matcherList.getMatchers(), platform)
                 .stream().filter(toUserMessage -> toUserMessage.getTarget().equals(clientID)).collect(Collectors.toList());
 
@@ -106,7 +106,7 @@ public class MessageController {
     }
 
     @RequestMapping(value = "/reply", method = RequestMethod.DELETE)
-    public void deleteReply(@RequestParam(value = "platform") String platform,
+    public void deleteReply(@RequestHeader(value = "X-Consumer-Username") String platform,
                             @RequestParam(value = "id") Integer replyID) {
         messageManager.markReplyAsProcessed(replyID, platform);
     }

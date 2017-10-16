@@ -20,13 +20,13 @@ public class NodeController {
     @RequestMapping(value = "/nodes", method = RequestMethod.GET)
     public @ResponseBody
     List<Node> listNodes(@RequestParam(value = "sender") String sender,
-                         @RequestParam(value = "platform") String platform) {
+                         @RequestHeader(value = "X-Consumer-Username") String platform) {
         return nodeManager.listNodes(sender, platform);
     }
 
     @RequestMapping(value = "/nodeStatus", method = RequestMethod.PATCH)
     public void updateNode(@RequestParam(value = "sender") String sender,
-                           @RequestParam(value = "platform") String platform,
+                           @RequestHeader(value = "X-Consumer-Username") String platform,
                            @RequestParam(value = "node") String node,
                            @RequestParam(value = "enabled") boolean isEnabled) throws NodeNotFoundException {
         nodeManager.updateNodeStatus(sender, platform, node, isEnabled);

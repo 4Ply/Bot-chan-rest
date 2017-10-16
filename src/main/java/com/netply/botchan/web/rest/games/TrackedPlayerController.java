@@ -56,7 +56,7 @@ public class TrackedPlayerController {
 
     @RequestMapping(value = "/allTrackedPlayers", produces = "application/json", method = RequestMethod.GET)
     public @ResponseBody
-    List<String> getTrackers(@RequestParam(value = "platform") String platform) {
+    List<String> getTrackers(@RequestHeader(value = "X-Consumer-Username") String platform) {
         return trackedPlayerManager.getAllTrackedPlayers(platform);
     }
 }

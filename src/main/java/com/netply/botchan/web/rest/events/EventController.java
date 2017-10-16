@@ -32,7 +32,7 @@ public class EventController {
 
     @RequestMapping(value = "/event", method = RequestMethod.DELETE)
     public void deleteEvent(
-            @RequestParam(value = "platform") String platform,
+            @RequestHeader(value = "X-Consumer-Username") String platform,
             @RequestParam(value = "id") String eventID) {
 
         eventManager.markEventAsProcessed(eventID, platform);
