@@ -3,7 +3,6 @@ package com.netply.botchan.web.rest.messaging;
 import com.netply.botchan.web.model.FromUserMessage;
 import com.netply.botchan.web.model.ToUserMessage;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface MessageDatabase {
@@ -19,5 +18,5 @@ public interface MessageDatabase {
 
     void markReplyAsProcessed(int replyID, String platform);
 
-    List<ToUserMessage> getUnProcessedReplies(ArrayList<String> targetMatchers, String platform);
+    List<ToUserMessage> getUnProcessedReplies(List<String> targetMatchers, String platform);
 }

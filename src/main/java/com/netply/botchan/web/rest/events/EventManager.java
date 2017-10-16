@@ -2,7 +2,6 @@ package com.netply.botchan.web.rest.events;
 
 import com.netply.botchan.web.model.Event;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface EventManager {
@@ -10,5 +9,5 @@ public interface EventManager {
 
     void markEventAsProcessed(String eventID, String platform);
 
-    List<Event> getEventsExcludingOnesDeletedForID(ArrayList<String> eventTypeMatchers, String platform);
+    List<Event> getEventsExcludingOnesDeletedForID(List<String> eventTypeMatchers, String platform);
 }

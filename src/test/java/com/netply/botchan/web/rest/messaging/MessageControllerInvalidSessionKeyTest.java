@@ -34,7 +34,7 @@ public class MessageControllerInvalidSessionKeyTest extends BaseControllerTest {
                 .accept(MediaType.APPLICATION_JSON);
 
         testInvalidSession(mvc, requestBuilder);
-        verify(messageManager, never()).addMessage(eq(message));
+        verify(messageManager, never()).addMessage(null, eq(message));
     }
 
     @Test
@@ -47,7 +47,7 @@ public class MessageControllerInvalidSessionKeyTest extends BaseControllerTest {
                 .accept(MediaType.APPLICATION_JSON);
 
         testInvalidSession(mvc, requestBuilder);
-        verify(messageManager, never()).addMessage(eq(message));
+        verify(messageManager, never()).addMessage(null, eq(message));
     }
 
     @Test

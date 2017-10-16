@@ -1,6 +1,5 @@
 package com.netply.botchan.web.rest.messaging;
 
-import com.netply.botchan.web.model.MatcherList;
 import com.netply.botchan.web.model.Message;
 import com.netply.botchan.web.model.Reply;
 import com.netply.botchan.web.rest.BaseControllerTest;
@@ -55,8 +54,6 @@ public class ReplyControllerTest extends BaseControllerTest {
             expectedMatchers.add(inputMatcher + "___" + VALID_CLIENT_ID);
         }
 
-        MatcherList matcherList = new MatcherList("", inputMatchers);
-
         ArrayList<Reply> expected = new ArrayList<>();
         expected.add(new Reply(32487, "sender"));
         expected.add(new Reply(9548, "sender"));
@@ -69,7 +66,7 @@ public class ReplyControllerTest extends BaseControllerTest {
         doReturn(toReturn).when(messageManager).getUnProcessedReplies(eq(expectedMatchers), anyString());
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/replies")
-                .content(gson.toJson(matcherList))
+                .content(gson.toJson(inputMatchers))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);
 

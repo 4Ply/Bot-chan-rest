@@ -13,11 +13,11 @@ public interface UserManager {
 
     void setFriendlyName(String clientID, String platform, String name);
 
-    String createPlatformOTP(String clientID, String platform);
+    String createPlatformOTP(int platformID, String platform);
 
-    String createUserOTP(String clientID, String platform, String platformOTP);
+    String createUserOTP(int platformID, String platform, String platformOTP);
 
-    boolean linkPlatform(String clientID, String platform, String userOTP);
+    boolean linkPlatform(int platformID, String platform, String userOTP);
 
     List<Integer> getDefaultPlatformIDs(int userID);
 }

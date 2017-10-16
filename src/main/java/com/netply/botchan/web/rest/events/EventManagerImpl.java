@@ -4,7 +4,6 @@ import com.netply.botchan.web.model.Event;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -38,7 +37,7 @@ public class EventManagerImpl implements EventManager {
     }
 
     @Override
-    public List<Event> getEventsExcludingOnesDeletedForID(ArrayList<String> eventTypeMatchers, String platform) {
+    public List<Event> getEventsExcludingOnesDeletedForID(List<String> eventTypeMatchers, String platform) {
         return eventMap.keySet().stream()
                 .distinct()
                 .filter(doesMessageMatchAnyMessageMatcherPattern(eventTypeMatchers))
@@ -46,7 +45,7 @@ public class EventManagerImpl implements EventManager {
                 .collect(Collectors.toList());
     }
 
-    private Predicate<Event> doesMessageMatchAnyMessageMatcherPattern(ArrayList<String> eventTypeMatchers) {
+    private Predicate<Event> doesMessageMatchAnyMessageMatcherPattern(List<String> eventTypeMatchers) {
         return event -> {
             for (String eventType : eventTypeMatchers) {
                 if (event.getEventType().equals(eventType)) {

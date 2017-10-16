@@ -66,20 +66,20 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
-    public String createPlatformOTP(String clientID, String platform) {
-        return userDatabase.createPlatformOTP(clientID, platform);
+    public String createPlatformOTP(int platformID, String platform) {
+        return userDatabase.createPlatformOTP(platformID);
     }
 
     @Override
-    public String createUserOTP(String clientID, String platform, String platformOTP) {
-        return userDatabase.createUserOTP(getUserID(clientID, platform), platformOTP);
+    public String createUserOTP(int platformID, String platform, String platformOTP) {
+        return userDatabase.createUserOTP(getUserID(platformID), platformOTP);
     }
 
     @Override
-    public boolean linkPlatform(String clientID, String platform, String userOTP) {
-        String platformOTP = userDatabase.getPlatformOTP(clientID, platform);
+    public boolean linkPlatform(int platformID, String platform, String userOTP) {
+        String platformOTP = userDatabase.getPlatformOTP(platformID);
         int userID = userDatabase.getUserIDForOTP(platformOTP, userOTP);
-        boolean result = userDatabase.setUserID(userID, clientID, platform);
+        boolean result = userDatabase.setUserID(userID, platformID);
         userDatabase.invalidatePlatformOTP(platformOTP);
         userDatabase.invalidateAuthorisedOTP(userOTP);
         return result;

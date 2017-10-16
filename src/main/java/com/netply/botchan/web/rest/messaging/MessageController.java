@@ -19,36 +19,39 @@ public class MessageController {
 
     @RequestMapping(value = "/messages", produces = "application/json", method = RequestMethod.POST)
     public @ResponseBody
-    List<FromUserMessage> getMessages(@RequestBody MatcherList matcherList) {
-        return messageManager.getUnProcessedMessagesForPlatform(matcherList.getMatchers(), matcherList.getPlatform());
+    List<FromUserMessage> getMessages(@RequestHeader(value = "X-Consumer-Username") String platform,
+                                      @RequestBody MatcherListWrapper matcherListWrapper) {
+        return messageManager.getUnProcessedMessagesForPlatform(matcherListWrapper.getMatchers(), platform);
     }
 
     @RequestMapping(value = "/uniqueMessages", produces = "application/json", method = RequestMethod.POST)
     public @ResponseBody
-    List<FromUserMessage> getMessagesAndMarkThemAsProcessed(@RequestBody MatcherList matcherList) {
-        List<FromUserMessage> messageList = messageManager.getUnProcessedMessagesForPlatform(matcherList.getMatchers(), matcherList.getPlatform());
+    List<FromUserMessage> getMessagesAndMarkThemAsProcessed(@RequestHeader(value = "X-Consumer-Username") String platform,
+                                                            @RequestBody MatcherListWrapper matcherListWrapper) {
+        List<FromUserMessage> messageList = messageManager.getUnProcessedMessagesForPlatform(matcherListWrapper.getMatchers(), platform);
         for (FromUserMessage message : messageList) {
-            messageManager.markMessageAsProcessed(message.getId(), matcherList.getPlatform());
+            messageManager.markMessageAsProcessed(message.getId(), platform);
         }
         return messageList;
     }
 
     @RequestMapping(value = "/messagesForUser", produces = "application/json", method = RequestMethod.POST)
     public @ResponseBody
-    List<FromUserMessage> getMessagesForUserUsingPlatform(@RequestBody MatcherList matcherList,
-                                                          @RequestParam(value = "clientID") String clientID,
-                                                          @RequestHeader(value = "X-Consumer-Username") String platform) {
-        return messageManager.getUnProcessedMessagesForPlatformAndUser(matcherList.getMatchers(), platform, clientID, platform);
+    List<FromUserMessage> getMessagesForUserUsingClientID(@RequestHeader(value = "X-Consumer-Username") String platform,
+                                                          @RequestBody MatcherListWrapper matcherListWrapper,
+                                                          @RequestParam(value = "clientID") String clientID) {
+        return messageManager.getUnProcessedMessagesForPlatformAndUser(matcherListWrapper.getMatchers(), platform, clientID, platform);
     }
 
     @RequestMapping(value = "/message", method = RequestMethod.PUT)
-    public void addMessage(@RequestBody Message message) {
-        messageManager.addMessage(message);
+    public void addMessage(@RequestHeader(value = "X-Consumer-Username") String platform,
+                           @RequestBody Message message) {
+        messageManager.addMessage(platform, message);
     }
 
     @RequestMapping(value = "/message", method = RequestMethod.DELETE)
-    public void deleteMessage(@RequestParam(value = "id") Integer messageID,
-                              @RequestHeader(value = "X-Consumer-Username") String platform) {
+    public void deleteMessage(@RequestHeader(value = "X-Consumer-Username") String platform,
+                              @RequestParam(value = "id") Integer messageID) {
         messageManager.markMessageAsProcessed(messageID, platform);
     }
 
@@ -77,26 +80,28 @@ public class MessageController {
 
     @RequestMapping(value = "/replies", produces = "application/json", method = RequestMethod.POST)
     public @ResponseBody
-    List<ToUserMessage> getReplies(@RequestBody MatcherList matcherList) {
-        return messageManager.getUnProcessedReplies(matcherList.getMatchers(), matcherList.getPlatform());
+    List<ToUserMessage> getReplies(@RequestHeader(value = "X-Consumer-Username") String platform,
+                                   @RequestBody MatcherListWrapper matcherListWrapper) {
+        return messageManager.getUnProcessedReplies(matcherListWrapper.getMatchers(), platform);
     }
 
     @RequestMapping(value = "/autoDeleteReplies", produces = "application/json", method = RequestMethod.POST)
     public @ResponseBody
-    List<ToUserMessage> getRepliesAndMarkThemAsProcessed(@RequestBody MatcherList matcherList) {
-        List<ToUserMessage> unProcessedReplies = messageManager.getUnProcessedReplies(matcherList.getMatchers(), matcherList.getPlatform());
+    List<ToUserMessage> getRepliesAndMarkThemAsProcessed(@RequestHeader(value = "X-Consumer-Username") String platform,
+                                                         @RequestBody MatcherListWrapper matcherListWrapper) {
+        List<ToUserMessage> unProcessedReplies = messageManager.getUnProcessedReplies(matcherListWrapper.getMatchers(), platform);
         for (ToUserMessage unProcessedReply : unProcessedReplies) {
-            messageManager.markReplyAsProcessed(unProcessedReply.getId(), matcherList.getPlatform());
+            messageManager.markReplyAsProcessed(unProcessedReply.getId(), platform);
         }
         return unProcessedReplies;
     }
 
-    @RequestMapping(value = "/autoDeleteRepliesForPlatform", produces = "application/json", method = RequestMethod.POST)
+    @RequestMapping(value = "/autoDeleteRepliesForClientID", produces = "application/json", method = RequestMethod.POST)
     public @ResponseBody
-    List<ToUserMessage> getRepliesAndMarkThemAsProcessedForPlatform(@RequestBody MatcherList matcherList,
-                                                                    @RequestParam(value = "clientID") String clientID,
-                                                                    @RequestHeader(value = "X-Consumer-Username") String platform) {
-        List<ToUserMessage> unProcessedReplies = messageManager.getUnProcessedReplies(matcherList.getMatchers(), platform)
+    List<ToUserMessage> getRepliesAndMarkThemAsProcessedForClientID(@RequestHeader(value = "X-Consumer-Username") String platform,
+                                                                    @RequestBody MatcherListWrapper matcherListWrapper,
+                                                                    @RequestParam(value = "clientID") String clientID) {
+        List<ToUserMessage> unProcessedReplies = messageManager.getUnProcessedReplies(matcherListWrapper.getMatchers(), platform)
                 .stream().filter(toUserMessage -> toUserMessage.getTarget().equals(clientID)).collect(Collectors.toList());
 
         for (ToUserMessage unProcessedReply : unProcessedReplies) {

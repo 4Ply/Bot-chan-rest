@@ -2,17 +2,16 @@ package com.netply.botchan.web.rest.messaging;
 
 import com.netply.botchan.web.model.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface MessageManager {
-    void addMessage(Message message);
+    void addMessage(String platform, Message message);
 
     void markMessageAsProcessed(int messageID, String platform);
 
-    List<FromUserMessage> getUnProcessedMessagesForPlatform(ArrayList<String> messageMatchers, String platform);
+    List<FromUserMessage> getUnProcessedMessagesForPlatform(List<String> messageMatchers, String platform);
 
-    List<FromUserMessage> getUnProcessedMessagesForPlatformAndUser(ArrayList<String> messageMatchers, String node, String clientID, String platform);
+    List<FromUserMessage> getUnProcessedMessagesForPlatformAndUser(List<String> messageMatchers, String node, String clientID, String platform);
 
     void addReply(Reply reply);
 
@@ -24,5 +23,5 @@ public interface MessageManager {
 
     void markReplyAsProcessed(int replyID, String platform);
 
-    List<ToUserMessage> getUnProcessedReplies(ArrayList<String> targetMatchers, String platform);
+    List<ToUserMessage> getUnProcessedReplies(List<String> targetMatchers, String platform);
 }

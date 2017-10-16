@@ -94,6 +94,18 @@ public class UserDatabaseImpl implements UserDatabase {
     }
 
     @Override
+    public boolean setUserID(int userID, int platformID) {
+        return jdbcTemplate.update(connection -> {
+            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE platform_users SET user_id = ? WHERE id = ?");
+            int i = 0;
+            preparedStatement.setInt(++i, userID);
+            preparedStatement.setInt(++i, platformID);
+
+            return preparedStatement;
+        }) >= 1;
+    }
+
+    @Override
     public String getName(int userID) {
         return jdbcTemplate.query(connection -> {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT `name` FROM users WHERE id = ? LIMIT 1");
@@ -117,13 +129,12 @@ public class UserDatabaseImpl implements UserDatabase {
     }
 
     @Override
-    public String createPlatformOTP(String clientID, String platform) {
-        String hash = DigestUtils.md5DigestAsHex(String.valueOf(clientID + "###" + platform + "###" + new Date().toString()).getBytes()).substring(0, 7).toUpperCase();
+    public String createPlatformOTP(int platformID) {
+        String hash = DigestUtils.md5DigestAsHex(String.valueOf(platformID + "###" + new Date().toString()).getBytes()).substring(0, 7).toUpperCase();
         jdbcTemplate.update(connection -> {
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO user_otps (id, client_id, platform, `hash`, expiration_date) VALUES (NULL, ?, ?, ?, (NOW() + INTERVAL 10 MINUTE))");
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO user_otps (id, platform_id, `hash`, expiration_date) VALUES (NULL, ?, ?, (NOW() + INTERVAL 10 MINUTE))");
             int i = 0;
-            preparedStatement.setString(++i, clientID);
-            preparedStatement.setString(++i, platform);
+            preparedStatement.setInt(++i, platformID);
             preparedStatement.setString(++i, hash);
 
             return preparedStatement;
@@ -162,12 +173,11 @@ public class UserDatabaseImpl implements UserDatabase {
     }
 
     @Override
-    public String getPlatformOTP(String clientID, String platform) {
+    public String getPlatformOTP(int platformID) {
         Optional<String> platformOTP = jdbcTemplate.query(connection -> {
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT `hash` FROM user_otps WHERE `client_id` = ? AND `platform` = ? AND expiration_date > NOW()");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT `hash` FROM user_otps WHERE `platform_id` = ? AND expiration_date > NOW()");
             int i = 0;
-            preparedStatement.setString(++i, clientID);
-            preparedStatement.setString(++i, platform);
+            preparedStatement.setInt(++i, platformID);
 
             return preparedStatement;
         }, (resultSet, i) -> resultSet.getString("hash")).stream().findFirst();

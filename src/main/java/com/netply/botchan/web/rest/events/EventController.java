@@ -1,7 +1,7 @@
 package com.netply.botchan.web.rest.events;
 
 import com.netply.botchan.web.model.Event;
-import com.netply.botchan.web.model.MatcherList;
+import com.netply.botchan.web.model.MatcherListWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,10 +19,9 @@ public class EventController {
 
     @RequestMapping(value = "/events", produces = "application/json", method = RequestMethod.POST)
     public @ResponseBody
-    List<Event> getEvents(@RequestBody MatcherList matcherList) {
-        String platform = matcherList.getPlatform();
-
-        return eventManager.getEventsExcludingOnesDeletedForID(matcherList.getMatchers(), platform);
+    List<Event> getEvents(@RequestHeader(value = "X-Consumer-Username") String platform,
+                          @RequestBody MatcherListWrapper matcherListWrapper) {
+        return eventManager.getEventsExcludingOnesDeletedForID(matcherListWrapper.getMatchers(), platform);
     }
 
     @RequestMapping(value = "/event", method = RequestMethod.PUT)

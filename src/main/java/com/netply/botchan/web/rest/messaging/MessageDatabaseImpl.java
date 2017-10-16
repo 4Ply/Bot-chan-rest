@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -99,7 +98,7 @@ public class MessageDatabaseImpl implements MessageDatabase {
     }
 
     @Override
-    public List<ToUserMessage> getUnProcessedReplies(ArrayList<String> targetMatchers, String platform) {
+    public List<ToUserMessage> getUnProcessedReplies(List<String> targetMatchers, String platform) {
         return jdbcTemplate.query(connection -> {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT replies.id, platform_users.client_id, message FROM replies " +
                     "INNER JOIN platform_users ON replies.platform_id = platform_users.id " +

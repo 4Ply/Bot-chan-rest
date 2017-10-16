@@ -36,7 +36,7 @@ public class MessageControllerTest extends BaseControllerTest {
 
         mvc.perform(withValidSessionKey(requestBuilder)).andExpect(status().isOk());
         message.setSender(null + "___" + VALID_CLIENT_ID);
-        verify(messageManager).addMessage(eq(message));
+        verify(messageManager).addMessage(null, eq(message));
         verifyNoMoreInteractions(messageManager);
     }
 

@@ -15,15 +15,17 @@ public interface UserDatabase {
 
     boolean setUserID(int userID, String clientID, String platform);
 
+    boolean setUserID(int userID, int platformID);
+
     String getName(int userID);
 
     void setName(int userID, String name);
 
-    String createPlatformOTP(String clientID, String platform);
+    String createPlatformOTP(int platformID);
 
     String createUserOTP(int userID, String platformOTP);
 
-    String getPlatformOTP(String clientID, String platform);
+    String getPlatformOTP(int platformID);
 
     int getUserIDForOTP(String platformOTP, String userOTP);
 

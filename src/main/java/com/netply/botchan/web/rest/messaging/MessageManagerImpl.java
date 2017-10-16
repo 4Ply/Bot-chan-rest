@@ -6,7 +6,6 @@ import com.netply.botchan.web.rest.user.UserManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,8 +24,8 @@ public class MessageManagerImpl implements MessageManager {
     }
 
     @Override
-    public void addMessage(Message message) {
-        messageDatabase.addMessage(userManager.getPlatformID(message.getSender(), message.getPlatform()), message.getMessage(), message.isDirect());
+    public void addMessage(String platform, Message message) {
+        messageDatabase.addMessage(userManager.getPlatformID(message.getSender(), platform), message.getMessage(), message.isDirect());
     }
 
     @Override
@@ -35,7 +34,7 @@ public class MessageManagerImpl implements MessageManager {
     }
 
     @Override
-    public List<FromUserMessage> getUnProcessedMessagesForPlatform(ArrayList<String> messageMatchers, String node) {
+    public List<FromUserMessage> getUnProcessedMessagesForPlatform(List<String> messageMatchers, String node) {
         nodeManager.ensureNodeExists(node);
         List<FromUserMessage> messageList = messageDatabase.getUnProcessedMessagesForPlatform(node);
 
@@ -45,7 +44,7 @@ public class MessageManagerImpl implements MessageManager {
     }
 
     @Override
-    public List<FromUserMessage> getUnProcessedMessagesForPlatformAndUser(ArrayList<String> messageMatchers, String node, String clientID, String platform) {
+    public List<FromUserMessage> getUnProcessedMessagesForPlatformAndUser(List<String> messageMatchers, String node, String clientID, String platform) {
         int userID = userManager.getUserID(clientID, platform);
         nodeManager.ensureNodeExists(node);
         List<FromUserMessage> messageList = messageDatabase.getUnProcessedMessagesForPlatform(node);
@@ -67,7 +66,7 @@ public class MessageManagerImpl implements MessageManager {
                 .collect(Collectors.toList());
     }
 
-    private List<FromUserMessage> messagesMatchingMatcherForPlatformUser(List<FromUserMessage> messageList, ArrayList<String> messageMatchers, List<Integer> platformIDs) {
+    private List<FromUserMessage> messagesMatchingMatcherForPlatformUser(List<FromUserMessage> messageList, List<String> messageMatchers, List<Integer> platformIDs) {
         return messageList.stream()
                 .filter(message -> messageMatchers.stream().anyMatch(s -> message.getMessage().matches(s)))
                 .filter(message -> platformIDs.contains(message.getPlatformID()))
@@ -105,7 +104,7 @@ public class MessageManagerImpl implements MessageManager {
     }
 
     @Override
-    public List<ToUserMessage> getUnProcessedReplies(ArrayList<String> targetMatchers, String platform) {
+    public List<ToUserMessage> getUnProcessedReplies(List<String> targetMatchers, String platform) {
         return messageDatabase.getUnProcessedReplies(targetMatchers, platform);
     }
 }
