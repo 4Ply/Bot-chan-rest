@@ -1,5 +1,7 @@
 package com.netply.botchan.web.rest.user;
 
+import com.netply.botchan.web.model.User;
+
 import java.util.List;
 
 public interface UserManager {
@@ -20,4 +22,6 @@ public interface UserManager {
     boolean linkPlatform(int platformID, String platform, String userOTP);
 
     List<Integer> getDefaultPlatformIDs(int userID);
+
+    List<User> getPlatformUsers(int userID);
 }

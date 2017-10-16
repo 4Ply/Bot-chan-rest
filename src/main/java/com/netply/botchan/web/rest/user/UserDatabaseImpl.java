@@ -1,5 +1,6 @@
 package com.netply.botchan.web.rest.user;
 
+import com.netply.botchan.web.model.User;
 import com.netply.botchan.web.rest.error.UnauthorisedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -67,6 +68,17 @@ public class UserDatabaseImpl implements UserDatabase {
 
             return preparedStatement;
         }, (resultSet, i) -> resultSet.getInt("id"));
+    }
+
+    @Override
+    public List<User> getPlatformUsers(int userID) {
+        return jdbcTemplate.query(connection -> {
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT client_id, platform FROM platform_users WHERE user_id = ?");
+            int i = 0;
+            preparedStatement.setInt(++i, userID);
+
+            return preparedStatement;
+        }, (resultSet, i) -> new User(resultSet.getString("client_id"), resultSet.getString("platform")));
     }
 
     @Override

@@ -93,7 +93,7 @@ public class MessageManagerImpl implements MessageManager {
     }
 
     @Override
-    public void addDirectMessageForMessageID(Integer messageID, String message) {
+    public void addDirectMessageForMessageID(int messageID, String message) {
         FromUserMessage originalMessage = messageDatabase.getMessage(messageID);
         messageDatabase.addReply(originalMessage.getPlatformID(), message);
     }

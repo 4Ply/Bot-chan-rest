@@ -1,9 +1,12 @@
 package com.netply.botchan.web.rest.user;
 
+import com.netply.botchan.web.model.User;
 import com.netply.botchan.web.rest.error.UnauthorisedException;
 import com.netply.botchan.web.rest.node.NodeManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class UserController {
@@ -69,5 +72,15 @@ public class UserController {
             throw new UnauthorisedException("Node not authorised for this user");
         }
         return userManager.getUserID(platformID);
+    }
+
+    @RequestMapping(value = "/platformUsers", method = RequestMethod.GET)
+    public List<User> getPlatformUsers(@RequestHeader(value = "X-Consumer-Username") String platform,
+                                       @RequestParam(value = "clientID") String clientID) {
+        if (!nodeManager.isNodeAllowed(clientID, platform, platform)) {
+            throw new UnauthorisedException("Node not authorised for this user");
+        }
+        int userID = userManager.getUserID(clientID, platform);
+        return userManager.getPlatformUsers(userID);
     }
 }

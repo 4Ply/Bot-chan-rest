@@ -1,5 +1,7 @@
 package com.netply.botchan.web.rest.user;
 
+import com.netply.botchan.web.model.User;
+
 import java.util.List;
 
 public interface UserDatabase {
@@ -10,6 +12,8 @@ public interface UserDatabase {
     int getPlatformID(String clientID, String platform);
 
     List<Integer> getDefaultPlatformIDs(int userID);
+
+    List<User> getPlatformUsers(int userID);
 
     int createUser();
 
