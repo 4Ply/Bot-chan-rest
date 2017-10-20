@@ -23,7 +23,7 @@ public class UserController {
     @RequestMapping(value = "/platformOTP", method = RequestMethod.GET)
     public String createPlatformOTP(@RequestHeader(value = "X-Consumer-Username") String platform,
                                     @RequestParam(value = "platformID") Integer platformID) {
-        if (nodeManager.isNodeAllowed(platformID, platform)) {
+        if (nodeManager.isNodeAllowedForPlatformID(platformID, platform)) {
             return userManager.createPlatformOTP(platformID, platform);
         } else {
             throw new UnauthorisedException();
@@ -34,7 +34,7 @@ public class UserController {
     public String createUserOTP(@RequestHeader(value = "X-Consumer-Username") String platform,
                                 @RequestParam(value = "platformID") Integer platformID,
                                 @RequestParam(value = "platformOTP") String platformOTP) {
-        if (nodeManager.isNodeAllowed(platformID, platform)) {
+        if (nodeManager.isNodeAllowedForPlatformID(platformID, platform)) {
             return userManager.createUserOTP(platformID, platform, platformOTP);
         } else {
             throw new UnauthorisedException();
@@ -45,7 +45,7 @@ public class UserController {
     public boolean linkPlatform(@RequestHeader(value = "X-Consumer-Username") String platform,
                                 @RequestParam(value = "platformID") Integer platformID,
                                 @RequestParam(value = "userOTP") String userOTP) {
-        if (nodeManager.isNodeAllowed(platformID, platform)) {
+        if (nodeManager.isNodeAllowedForPlatformID(platformID, platform)) {
             return userManager.linkPlatform(platformID, platform, userOTP);
         } else {
             throw new UnauthorisedException();
@@ -68,7 +68,7 @@ public class UserController {
     @RequestMapping(value = "/userID", method = RequestMethod.GET)
     public Integer getUserID(@RequestHeader(value = "X-Consumer-Username") String platform,
                              @RequestParam(value = "platformID") Integer platformID) {
-        if (!nodeManager.isNodeAllowed(platformID, platform)) {
+        if (!nodeManager.isNodeAllowedForPlatformID(platformID, platform)) {
             throw new UnauthorisedException("Node not authorised for this user");
         }
         return userManager.getUserID(platformID);

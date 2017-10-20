@@ -8,7 +8,9 @@ import java.util.List;
 public interface NodeManager {
     void ensureNodeExists(String node);
 
-    boolean isNodeAllowed(int platformID, String node);
+    boolean isNodeAllowedForUserID(int userID, String node);
+
+    boolean isNodeAllowedForPlatformID(int platformID, String node);
 
     boolean isNodeAllowed(String clientID, String platform, String node);
 

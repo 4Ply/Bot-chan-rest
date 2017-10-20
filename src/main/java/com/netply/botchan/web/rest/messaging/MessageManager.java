@@ -1,6 +1,7 @@
 package com.netply.botchan.web.rest.messaging;
 
 import com.netply.botchan.web.model.*;
+import com.netply.botchan.web.rest.error.TokenNotFoundException;
 
 import java.util.List;
 
@@ -18,6 +19,8 @@ public interface MessageManager {
     void addDirectMessage(ServerMessage serverMessage);
 
     void addDirectMessage(int userID, String message);
+
+    void addDirectMessage(String token, String message) throws TokenNotFoundException;
 
     void addDirectMessageForMessageID(int messageID, String message);
 

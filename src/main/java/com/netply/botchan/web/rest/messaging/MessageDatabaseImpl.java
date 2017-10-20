@@ -5,6 +5,7 @@ import com.netply.botchan.web.model.ToUserMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -98,6 +99,7 @@ public class MessageDatabaseImpl implements MessageDatabase {
     }
 
     @Override
+    @Transactional
     public List<ToUserMessage> getUnProcessedReplies(List<String> targetMatchers, String platform) {
         return jdbcTemplate.query(connection -> {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT replies.id, platform_users.client_id, message FROM replies " +

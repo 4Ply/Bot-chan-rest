@@ -1,6 +1,7 @@
 package com.netply.botchan.web.rest.messaging;
 
 import com.netply.botchan.web.model.*;
+import com.netply.botchan.web.rest.error.TokenNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -65,17 +66,18 @@ public class MessageController {
         messageManager.addDirectMessage(serverMessage);
     }
 
+    @RequestMapping(value = "/directMessage/{token}", method = {RequestMethod.GET, RequestMethod.PUT})
+    public String addDirectMessageToUser(@PathVariable(value = "token") String token,
+                                         @RequestParam(value = "message") String message) throws TokenNotFoundException {
+        messageManager.addDirectMessage(token, message);
+
+        return "Message sent";
+    }
+
     @RequestMapping(value = "/directReply/{messageID}", method = RequestMethod.PUT)
     public void addDirectMessageForMessageID(@PathVariable("messageID") Integer messageID,
                                              @RequestParam("message") String message) {
         messageManager.addDirectMessageForMessageID(messageID, message);
-    }
-
-    @RequestMapping(value = "/directMessage/{id}", method = {RequestMethod.GET, RequestMethod.PUT})
-    public String addDirectMessageToUser(@PathVariable(value = "id") Integer id, @RequestParam(value = "message") String message) {
-        messageManager.addDirectMessage(id, message);
-
-        return "Message sent";
     }
 
     @RequestMapping(value = "/replies", produces = "application/json", method = RequestMethod.POST)

@@ -1,6 +1,8 @@
 package com.netply.botchan.web.rest.messaging;
 
 import com.netply.botchan.web.model.*;
+import com.netply.botchan.web.rest.token.AccessTokenManager;
+import com.netply.botchan.web.rest.error.TokenNotFoundException;
 import com.netply.botchan.web.rest.node.NodeManager;
 import com.netply.botchan.web.rest.user.UserManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +16,15 @@ public class MessageManagerImpl implements MessageManager {
     private MessageDatabase messageDatabase;
     private UserManager userManager;
     private NodeManager nodeManager;
+    private AccessTokenManager accessTokenManager;
 
 
     @Autowired
-    public MessageManagerImpl(MessageDatabase messageDatabase, UserManager userManager, NodeManager nodeManager) {
+    public MessageManagerImpl(MessageDatabase messageDatabase, UserManager userManager, NodeManager nodeManager, AccessTokenManager accessTokenManager) {
         this.messageDatabase = messageDatabase;
         this.userManager = userManager;
         this.nodeManager = nodeManager;
+        this.accessTokenManager = accessTokenManager;
     }
 
     @Override
@@ -62,7 +66,7 @@ public class MessageManagerImpl implements MessageManager {
         return messageList.stream()
                 .map(FromUserMessage::getPlatformID)
                 .distinct()
-                .filter(platformID -> nodeManager.isNodeAllowed(platformID, node))
+                .filter(platformID -> nodeManager.isNodeAllowedForPlatformID(platformID, node))
                 .collect(Collectors.toList());
     }
 
@@ -82,6 +86,13 @@ public class MessageManagerImpl implements MessageManager {
     @Override
     public void addDirectMessage(ServerMessage serverMessage) {
         addDirectMessage(serverMessage.getUserID(), serverMessage.getMessage());
+    }
+
+    @Override
+    public void addDirectMessage(String token, String message) throws TokenNotFoundException {
+        int userID = accessTokenManager.getUserID(token);
+
+        addDirectMessage(userID, message);
     }
 
     @Override
