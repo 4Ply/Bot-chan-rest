@@ -10,9 +10,9 @@ public interface MessageManager {
 
     void markMessageAsProcessed(int messageID, String platform);
 
-    List<FromUserMessage> getUnProcessedMessagesForPlatform(List<String> messageMatchers, String platform);
+    List<FromUserMessage> getUnProcessedMessagesForPlatform(List<String> messageMatchers, String platform, String secondsBeforeNow);
 
-    List<FromUserMessage> getUnProcessedMessagesForPlatformAndUser(List<String> messageMatchers, String node, String clientID, String platform);
+    List<FromUserMessage> getUnProcessedMessagesForPlatformAndUser(List<String> messageMatchers, String node, String secondsBeforeNow, String clientID, String platform);
 
     void addReply(String node, Reply reply);
 

@@ -12,7 +12,7 @@ public interface MessageDatabase {
 
     void markMessageAsProcessed(int messageID, String platform);
 
-    List<FromUserMessage> getUnProcessedMessagesForPlatform(String platform);
+    List<FromUserMessage> getUnProcessedMessagesForPlatform(String secondsBeforeNow, String platform);
 
     void addReply(String node, int platformID, String message);
 

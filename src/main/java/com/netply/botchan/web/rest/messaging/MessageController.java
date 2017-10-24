@@ -21,15 +21,17 @@ public class MessageController {
     @RequestMapping(value = "/messages", produces = "application/json", method = RequestMethod.POST)
     public @ResponseBody
     List<FromUserMessage> getMessages(@RequestHeader(value = "X-Consumer-Username") String platform,
+                                      @RequestParam(value = "secondsBeforeNow", defaultValue = "300") String secondsBeforeNow,
                                       @RequestBody MatcherListWrapper matcherListWrapper) {
-        return messageManager.getUnProcessedMessagesForPlatform(matcherListWrapper.getMatchers(), platform);
+        return messageManager.getUnProcessedMessagesForPlatform(matcherListWrapper.getMatchers(), platform, secondsBeforeNow);
     }
 
     @RequestMapping(value = "/uniqueMessages", produces = "application/json", method = RequestMethod.POST)
     public @ResponseBody
     List<FromUserMessage> getMessagesAndMarkThemAsProcessed(@RequestHeader(value = "X-Consumer-Username") String platform,
+                                                            @RequestParam(value = "secondsBeforeNow", defaultValue = "300") String secondsBeforeNow,
                                                             @RequestBody MatcherListWrapper matcherListWrapper) {
-        List<FromUserMessage> messageList = messageManager.getUnProcessedMessagesForPlatform(matcherListWrapper.getMatchers(), platform);
+        List<FromUserMessage> messageList = messageManager.getUnProcessedMessagesForPlatform(matcherListWrapper.getMatchers(), platform, secondsBeforeNow);
         for (FromUserMessage message : messageList) {
             messageManager.markMessageAsProcessed(message.getId(), platform);
         }
@@ -39,9 +41,10 @@ public class MessageController {
     @RequestMapping(value = "/messagesForUser", produces = "application/json", method = RequestMethod.POST)
     public @ResponseBody
     List<FromUserMessage> getMessagesForUserUsingClientID(@RequestHeader(value = "X-Consumer-Username") String platform,
-                                                          @RequestBody MatcherListWrapper matcherListWrapper,
-                                                          @RequestParam(value = "clientID") String clientID) {
-        return messageManager.getUnProcessedMessagesForPlatformAndUser(matcherListWrapper.getMatchers(), platform, clientID, platform);
+                                                          @RequestParam(value = "secondsBeforeNow", defaultValue = "300") String secondsBeforeNow,
+                                                          @RequestParam(value = "clientID") String clientID,
+                                                          @RequestBody MatcherListWrapper matcherListWrapper) {
+        return messageManager.getUnProcessedMessagesForPlatformAndUser(matcherListWrapper.getMatchers(), platform, secondsBeforeNow, clientID, platform);
     }
 
     @RequestMapping(value = "/message", method = RequestMethod.PUT)

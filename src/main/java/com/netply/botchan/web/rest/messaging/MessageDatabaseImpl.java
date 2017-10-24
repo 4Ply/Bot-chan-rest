@@ -64,11 +64,13 @@ public class MessageDatabaseImpl implements MessageDatabase {
     }
 
     @Override
-    public List<FromUserMessage> getUnProcessedMessagesForPlatform(String platform) {
+    public List<FromUserMessage> getUnProcessedMessagesForPlatform(String secondsBeforeNow, String platform) {
         return jdbcTemplate.query(connection -> {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT id, platform_id, message, direct FROM messages " +
-                    "WHERE messages.id NOT IN (SELECT message_id FROM message_processed WHERE message_processed.platform = ?)");
+                    "WHERE `time` >= date_sub(NOW(), INTERVAL ? SECOND) " +
+                    "AND messages.id NOT IN (SELECT message_id FROM message_processed WHERE message_processed.platform = ?)");
             int i = 0;
+            preparedStatement.setString(++i, secondsBeforeNow);
             preparedStatement.setString(++i, platform);
 
             return preparedStatement;

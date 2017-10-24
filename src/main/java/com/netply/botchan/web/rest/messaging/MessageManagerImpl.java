@@ -38,9 +38,9 @@ public class MessageManagerImpl implements MessageManager {
     }
 
     @Override
-    public List<FromUserMessage> getUnProcessedMessagesForPlatform(List<String> messageMatchers, String node) {
+    public List<FromUserMessage> getUnProcessedMessagesForPlatform(List<String> messageMatchers, String node, String secondsBeforeNow) {
         nodeManager.ensureNodeExists(node);
-        List<FromUserMessage> messageList = messageDatabase.getUnProcessedMessagesForPlatform(node);
+        List<FromUserMessage> messageList = messageDatabase.getUnProcessedMessagesForPlatform(secondsBeforeNow, node);
 
         List<Integer> platformIDs = getPlatformUsersWhereNodeIsAuthorised(messageList, node);
 
@@ -48,10 +48,10 @@ public class MessageManagerImpl implements MessageManager {
     }
 
     @Override
-    public List<FromUserMessage> getUnProcessedMessagesForPlatformAndUser(List<String> messageMatchers, String node, String clientID, String platform) {
+    public List<FromUserMessage> getUnProcessedMessagesForPlatformAndUser(List<String> messageMatchers, String node, String secondsBeforeNow, String clientID, String platform) {
         int userID = userManager.getUserID(clientID, platform);
         nodeManager.ensureNodeExists(node);
-        List<FromUserMessage> messageList = messageDatabase.getUnProcessedMessagesForPlatform(node);
+        List<FromUserMessage> messageList = messageDatabase.getUnProcessedMessagesForPlatform(secondsBeforeNow, node);
 
         List<Integer> platformIDs = getPlatformUsersWhereNodeIsAuthorised(messageList, node);
 
