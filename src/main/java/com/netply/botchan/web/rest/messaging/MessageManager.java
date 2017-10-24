@@ -14,15 +14,15 @@ public interface MessageManager {
 
     List<FromUserMessage> getUnProcessedMessagesForPlatformAndUser(List<String> messageMatchers, String node, String clientID, String platform);
 
-    void addReply(Reply reply);
+    void addReply(String node, Reply reply);
 
-    void addDirectMessage(ServerMessage serverMessage);
+    void addDirectMessage(String node, ServerMessage serverMessage);
 
-    void addDirectMessage(int userID, String message);
+    void addDirectMessage(String node, int userID, String message);
 
-    void addDirectMessage(String token, String message) throws TokenNotFoundException;
+    void addDirectMessage(String node, String token, String message) throws TokenNotFoundException;
 
-    void addDirectMessageForMessageID(int messageID, String message);
+    void addDirectMessageForMessageID(String node, int messageID, String message);
 
     void markReplyAsProcessed(int replyID, String platform);
 

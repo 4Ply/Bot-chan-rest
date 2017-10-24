@@ -78,35 +78,35 @@ public class MessageManagerImpl implements MessageManager {
     }
 
     @Override
-    public void addReply(Reply reply) {
+    public void addReply(String node, Reply reply) {
         FromUserMessage message = messageDatabase.getMessage(reply.getOriginalMessageID());
-        messageDatabase.addReply(message.getPlatformID(), reply.getMessage());
+        messageDatabase.addReply(node, message.getPlatformID(), reply.getMessage());
     }
 
     @Override
-    public void addDirectMessage(ServerMessage serverMessage) {
-        addDirectMessage(serverMessage.getUserID(), serverMessage.getMessage());
+    public void addDirectMessage(String node, ServerMessage serverMessage) {
+        addDirectMessage(node, serverMessage.getUserID(), serverMessage.getMessage());
     }
 
     @Override
-    public void addDirectMessage(String token, String message) throws TokenNotFoundException {
+    public void addDirectMessage(String node, String token, String message) throws TokenNotFoundException {
         int userID = accessTokenManager.getUserID(token);
 
-        addDirectMessage(userID, message);
+        addDirectMessage(node, userID, message);
     }
 
     @Override
-    public void addDirectMessage(int userID, String message) {
+    public void addDirectMessage(String node, int userID, String message) {
         List<Integer> platformIDs = userManager.getDefaultPlatformIDs(userID);
         for (Integer platformID : platformIDs) {
-            messageDatabase.addReply(platformID, message);
+            messageDatabase.addReply(node, platformID, message);
         }
     }
 
     @Override
-    public void addDirectMessageForMessageID(int messageID, String message) {
+    public void addDirectMessageForMessageID(String node, int messageID, String message) {
         FromUserMessage originalMessage = messageDatabase.getMessage(messageID);
-        messageDatabase.addReply(originalMessage.getPlatformID(), message);
+        messageDatabase.addReply(node, originalMessage.getPlatformID(), message);
     }
 
     @Override

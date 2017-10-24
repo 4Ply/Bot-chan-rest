@@ -38,7 +38,7 @@ public class ReplyControllerTest extends BaseControllerTest {
                 .accept(MediaType.APPLICATION_JSON);
 
         mvc.perform(withValidSessionKey(requestBuilder)).andExpect(status().isOk());
-        verify(messageManager).addReply(eq(reply));
+        verify(messageManager).addReply("node", eq(reply));
         verifyNoMoreInteractions(messageManager);
     }
 

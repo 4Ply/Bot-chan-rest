@@ -76,12 +76,13 @@ public class MessageDatabaseImpl implements MessageDatabase {
     }
 
     @Override
-    public void addReply(int platformID, String message) {
+    public void addReply(String node, int platformID, String message) {
         jdbcTemplate.update(connection -> {
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO replies (id, platform_id, message) VALUES (NULL, ?, ?)");
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO replies (id, platform_id, message, originating_node) VALUES (NULL, ?, ?, ?)");
             int i = 0;
             preparedStatement.setInt(++i, platformID);
             preparedStatement.setString(++i, message);
+            preparedStatement.setString(++i, node);
 
             return preparedStatement;
         });
@@ -102,7 +103,7 @@ public class MessageDatabaseImpl implements MessageDatabase {
     @Transactional
     public List<ToUserMessage> getUnProcessedReplies(List<String> targetMatchers, String platform) {
         return jdbcTemplate.query(connection -> {
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT replies.id, platform_users.client_id, message FROM replies " +
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT replies.id, platform_users.client_id, message, originating_node FROM replies " +
                     "INNER JOIN platform_users ON replies.platform_id = platform_users.id " +
                     "WHERE replies.id NOT IN (SELECT reply_id FROM replies_processed WHERE replies_processed.platform = ?) " +
                     "AND platform_users.platform = ?");
@@ -111,6 +112,19 @@ public class MessageDatabaseImpl implements MessageDatabase {
             preparedStatement.setString(++i, platform);
 
             return preparedStatement;
-        }, (resultSet, i) -> new ToUserMessage(resultSet.getInt("id"), resultSet.getString("client_id"), resultSet.getString("message")));
+        }, MessageDatabaseImpl::createToUserMessage);
+    }
+
+    private static ToUserMessage createToUserMessage(ResultSet resultSet, int i) throws SQLException {
+        String originatingNode = resultSet.getString("originating_node");
+        String message = resultSet.getString("message");
+        String fullMessage;
+        if (originatingNode != null && !originatingNode.trim().equals("")) {
+            fullMessage = String.format("[%s]: %s", originatingNode, message);
+        } else {
+            fullMessage = message;
+        }
+
+        return new ToUserMessage(resultSet.getInt("id"), resultSet.getString("client_id"), fullMessage, originatingNode, message);
     }
 }

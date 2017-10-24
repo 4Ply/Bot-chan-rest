@@ -57,27 +57,31 @@ public class MessageController {
     }
 
     @RequestMapping(value = "/reply", method = RequestMethod.PUT)
-    public void addReply(@RequestBody Reply reply) {
-        messageManager.addReply(reply);
+    public void addReply(@RequestHeader(value = "X-Consumer-Username") String node,
+                         @RequestBody Reply reply) {
+        messageManager.addReply(node, reply);
     }
 
     @RequestMapping(value = "/directMessage", method = RequestMethod.PUT)
-    public void addDirectMessage(@RequestBody ServerMessage serverMessage) {
-        messageManager.addDirectMessage(serverMessage);
+    public void addDirectMessage(@RequestHeader(value = "X-Consumer-Username") String node,
+                                 @RequestBody ServerMessage serverMessage) {
+        messageManager.addDirectMessage(node, serverMessage);
     }
 
     @RequestMapping(value = "/directMessage/{token}", method = {RequestMethod.GET, RequestMethod.PUT})
-    public String addDirectMessageToUser(@PathVariable(value = "token") String token,
+    public String addDirectMessageToUser(@RequestHeader(value = "X-Consumer-Username", defaultValue = "") String node,
+                                         @PathVariable(value = "token") String token,
                                          @RequestParam(value = "message") String message) throws TokenNotFoundException {
-        messageManager.addDirectMessage(token, message);
+        messageManager.addDirectMessage(node, token, message);
 
         return "Message sent";
     }
 
     @RequestMapping(value = "/directReply/{messageID}", method = RequestMethod.PUT)
-    public void addDirectMessageForMessageID(@PathVariable("messageID") Integer messageID,
+    public void addDirectMessageForMessageID(@RequestHeader(value = "X-Consumer-Username") String node,
+                                             @PathVariable("messageID") Integer messageID,
                                              @RequestParam("message") String message) {
-        messageManager.addDirectMessageForMessageID(messageID, message);
+        messageManager.addDirectMessageForMessageID(node, messageID, message);
     }
 
     @RequestMapping(value = "/replies", produces = "application/json", method = RequestMethod.POST)

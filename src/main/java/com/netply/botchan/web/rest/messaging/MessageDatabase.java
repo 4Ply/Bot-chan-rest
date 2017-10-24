@@ -14,7 +14,7 @@ public interface MessageDatabase {
 
     List<FromUserMessage> getUnProcessedMessagesForPlatform(String platform);
 
-    void addReply(int platformID, String message);
+    void addReply(String node, int platformID, String message);
 
     void markReplyAsProcessed(int replyID, String platform);
 
